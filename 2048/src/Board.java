@@ -34,7 +34,7 @@ public class Board {
 		Random tempRandLabel2 = new Random();
 		int randLabel2 = randLabel1;
 		while(randLabel2 == randLabel1) {
-			randLabel2 = tempRandLabel1.nextInt(16);
+			randLabel2 = tempRandLabel2.nextInt(16);
 		}
 		Tile tileArray[] = new Tile[16];
 		Tile tile;
@@ -49,13 +49,15 @@ public class Board {
 			l.setFont(l.getFont().deriveFont(20f));
 			panel.add(l);
 		}
+//		System.out.println(randLabel1);
+//		System.out.println(randLabel2);
 		tileArray[randLabel1].setSum(rand1);
 		JLabel temp = (JLabel) panel.getComponent(randLabel1);
 		temp.setText("" + tileArray[randLabel1].getSum());
 		
 		tileArray[randLabel2].setSum(rand2);
 		JLabel temp2 = (JLabel) panel.getComponent(randLabel2);
-		temp.setText(""+ tileArray[randLabel2].getSum());
+		temp2.setText(""+ tileArray[randLabel2].getSum());
 		frame.addKeyListener(new KeyListener() {
 
 			@Override
