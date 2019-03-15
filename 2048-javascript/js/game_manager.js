@@ -12,6 +12,7 @@ function GameManager(size, InputManager, Actuator, StorageManager) {
 
   //added by Li
   this.inputManager.on("run", this.run.bind(this));
+  this.inputManager.on("stop", this.stop.bind(this));
 
 //  this.inputManager.on('run', function() {
 //    if (this.running) {
@@ -311,4 +312,8 @@ GameManager.prototype.run = function() {
       self.run();
     }, timeout);
   }
+}
+GameManager.prototype.stop = function() {
+   // alert("here");
+  this.aiAutoRunning = false;  
 }

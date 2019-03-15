@@ -38,6 +38,7 @@ AI.prototype.search = function (depth, alpha, beta, positions, cutoffs,playerTur
     
     
     if(playerTurn){
+        bestScore = alpha;
         // 0: up, 1: right, 2: down, 3: left
         for (var direction in [0, 1, 2, 3]) {
             //store all direction in this depth
@@ -51,39 +52,52 @@ AI.prototype.search = function (depth, alpha, beta, positions, cutoffs,playerTur
             var moveResult = newGrid.move(direction);
             //return {moved: moved, score: score, won: won};
             if(moveResult.moved ){
-                var evalScore = newAI.eval();
-
-                //result[direction] = {score:evalScore };
-                if(searchBestResult == {} && initialDirection === -1){
-                    bestScore = evalScore;
-                    bestMove = moveResult.move;
-                    searchBestResult = { move: direction, score: bestScore,positions:positions };
-                }else if(bestScore < evalScore){
-                   bestScore = evalScore;
-                    bestMove = moveResult.move;
-                    searchBestResult = { move: direction, score: bestScore,positions:positions };
-                    if(initialDirection !== -1){
-                        searchBestResult.move = initialDirection;
-                        //alert(initialDirection);
-                    }
-                }
-               // console.log(evalScore + " " + direction);
-                 
-                if(depth == 0){
-                    continue;
-                }
+                //positions ++;
                 if(depth > 0){
-                    //newAI.computerTurnSearch();
                     if(initialDirection !== -1){
-                        var tempResult = newAI.search(depth-1,0,0,positions+1,0,false,initialDirection);
+                        var tempResult = newAI.search(depth-1,bestScore,beta,positions,cutoffs,false,initialDirection);
                     }else{
-                        var tempResult = newAI.search(depth-1,0,0,positions+1,0,false,direction);
+                        var tempResult = newAI.search(depth-1,bestScore,beta,positions,cutoffs,false,direction);
                     }
-                    //var tempResult = newAI.search(depth-1,0,0,positions+1,0,evalScore);
-                    if(searchBestResult.score < tempResult.score){
-                        searchBestResult = tempResult;
-                    }
-                }                  
+                    cutoffs = tempResult.cutoffs;
+                    positions = tempResult.positions;
+                }
+                
+                if(depth == 0){
+                    var evalScore = newAI.eval();
+                    tempResult = { move: direction, score: evalScore};
+                    //alpha = evalScore;
+                    //continue;
+                }
+                
+//                if(alpha > bestScore){//max节点，取所有节点中的最大分数
+//                    bestScore = alpha;
+//                }
+
+//                if(searchBestResult == {} && initialDirection === -1){
+//                    bestScore = evalScore;
+//                    bestMove = moveResult.move;
+//                    searchBestResult = { move: direction, score: bestScore,positions:positions,cutoffs:cutoffs };
+//                }else if(bestScore < evalScore){
+//                    //console.log(bestScore);
+//                    bestScore = evalScore;
+//                    bestMove = moveResult.move;
+//                    searchBestResult = { move: direction, score: bestScore,positions:positions,cutoffs:cutoffs};
+//                    if(initialDirection !== -1){
+//                        searchBestResult.move = initialDirection;
+//                    }
+//                }
+                //console.log(tempResult.score);
+               if( bestScore < tempResult.score){
+                   bestScore = tempResult.score;
+                   bestMove = direction;
+                   searchBestResult = tempResult;
+               }
+               if(bestScore >= beta){
+                   cutoffs++;
+                  // positions++;                         
+                   return {move:direction,score:beta,positions:positions,cutoffs:cutoffs};//减枝,不去访问邻居节点，直接返回
+               }               
             }
   
         }
@@ -91,8 +105,9 @@ AI.prototype.search = function (depth, alpha, beta, positions, cutoffs,playerTur
     }
     
     
-    //computer turn
+    //computer turn 相当于min节点，在这里beta要取子节点最大值中的最小值
     if(!playerTurn){
+        bestScore = beta;
         var cells = this.grid.availableCells();
         var start = 0; 
         var  end = cells.length;
@@ -135,20 +150,26 @@ AI.prototype.search = function (depth, alpha, beta, positions, cutoffs,playerTur
         var newGrid = this.grid.clone();
         newGrid.insertTile(worstTile);
         var newAI = new AI(newGrid);
-
-        return newAI.search(depth,0,0,positions,0,true,initialDirection);
-//        result =   newAI.search(depth,0,0,positions,0,true);
-//            if (result.score > searchBestResult.score) {
-//          searchBestResult = result;
-//        }
-//        return result;
+        var tempResult = newAI.search(depth,alpha,bestScore,positions,cutoffs,true,initialDirection);
+        cutoffs = tempResult.cutoffs;
+        positions = tempResult.positions;
         
+        if( bestScore > tempResult.score){//这里要取最大值中的最小值
+            bestScore = tempResult.score;
+            searchBestResult = tempResult;
+        }
+        
+        
+        if(alpha >= bestScore){
+            cutoffs++;
+            //positions++;
+            return {move:-1,score:alpha,positions:positions,cutoffs:cutoffs};       
+        }
+        //result = newAI.search(depth,alpha,beta,positions,0,true,initialDirection);
     }
-    return searchBestResult;
     
-//    var end = 3, start = 0;
-//    bestMove = Math.floor(Math.random() * (end - start + 1) + start);
-//    return {move: bestMove, score: 0, positions: 0, cutoffs: 0};
+    return { move: bestMove, score: bestScore, positions: positions, cutoffs: cutoffs };
+    //return searchBestResult;
 }
 
 
@@ -179,7 +200,7 @@ AI.prototype.getBest = function () {
 AI.prototype.iterativeDeep = function () {
 
     var start = (new Date()).getTime();
-    var depth = 5;
+    var depth = 1;
     var best;
 
 // can't limit the excution time of function in javascript!
@@ -192,8 +213,10 @@ AI.prototype.iterativeDeep = function () {
         } else {
             best = newBest;
         }
-        //depth++;
+        depth++;
+       
     } while ((new Date()).getTime() - start < minSearchTime);
     console.log(best);
+     console.log(depth);
     return best;
 }

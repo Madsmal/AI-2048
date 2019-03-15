@@ -128,6 +128,7 @@ KeyboardInputManager.prototype.listen = function () {
   
     //added by Li
     this.bindButtonPress("#ai-auto-run", this.aiAutoRun);
+    this.bindButtonPress("#ai-stop", this.aiStop);
 
 };
 
@@ -151,4 +152,8 @@ KeyboardInputManager.prototype.bindButtonPress = function (selector, fn) {
 KeyboardInputManager.prototype.aiAutoRun = function (event) {
   event.preventDefault();
   this.emit("run");
+};
+KeyboardInputManager.prototype.aiStop = function (event) {
+  event.preventDefault();
+  this.emit("stop");
 };
