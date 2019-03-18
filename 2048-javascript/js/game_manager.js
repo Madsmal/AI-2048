@@ -11,6 +11,7 @@ function GameManager(size, InputManager, Actuator, StorageManager) {
   this.inputManager.on("keepPlaying", this.keepPlaying.bind(this));
 
   //added by Li
+  this.aiAutoRunning = false;
   this.inputManager.on("run", this.run.bind(this));
   this.inputManager.on("stop", this.stop.bind(this));
 
@@ -116,7 +117,8 @@ GameManager.prototype.actuate = function () {
     over:       this.over,
     won:        this.won,
     bestScore:  this.storageManager.getBestScore(),
-    terminated: this.isGameTerminated()
+    terminated: this.isGameTerminated(),
+    aiAutoRunning: this.aiAutoRunning
   });
 
 };
@@ -306,6 +308,7 @@ GameManager.prototype.run = function() {
   var best = this.ai.getBest();  
   this.move(best.move);
   var timeout = animationDelay;
+  //console.log(this.aiAutoRunning);
   if (this.aiAutoRunning && !this.over && !this.won) {
     var self = this;
     setTimeout(function(){
@@ -314,6 +317,6 @@ GameManager.prototype.run = function() {
   }
 }
 GameManager.prototype.stop = function() {
-   // alert("here");
-  this.aiAutoRunning = false;  
+  this.aiAutoRunning = false; 
+  alert(this.aiAutoRunning);
 }

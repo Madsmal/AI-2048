@@ -240,12 +240,50 @@ AIGrid.prototype.findLargestTile = function(){
 AIGrid.prototype.largestTilePositionEval = function(){
    var corners = [{x:0,y:0},{x:0,y:3},{x:3,y:0},{x:3,y:3}];
    var tile = this.findLargestTile();
-   var tilePosition = {x:tile.x,y:tile.y};
+   var tilePosition = {x:tile.x,y: tile.y};
+   var score  =0;
+   var x = tile.x;
+   var y = tile.y;
    
    if((tile.x == 0 || tile.x == 3) && (tile.y==0 || tile.y == 3)){
-       return 50;
+  // if((tile.x == 0 && tile.y==0 ) || (tile.x == 0 && tile.y==3) || (tile.x == 3 && tile.y==0)){
+       score += 50 ;
+       if(tile.y > 1 && this.cells[x][y-1] != null ){//up
+           if(this.cells[x][y-1].value == tile.value){
+                score += 20;
+            }
+           if(this.cells[x][y-1].value == tile.value/2){
+                score += 10;
+            }            
+        }
+       if(tile.y < 2 && this.cells[x][y+1] != null ){//down
+           if(this.cells[x][y+1].value == tile.value){
+                score += 20;
+            }
+           if(this.cells[x][y+1].value == tile.value/2){
+                score += 10;
+            }            
+        }  
+       if(tile.x > 1 && this.cells[x-1][y] != null ){//left
+           if(this.cells[x-1][y].value == tile.value){
+                score += 20;
+            }
+           if(this.cells[x-1][y].value == tile.value/2){
+                score += 10;
+            }            
+        } 
+       if(tile.x < 2 && this.cells[x+1][y] != null ){//right
+           if(this.cells[x+1][y].value == tile.value){
+                score += 20;
+            }
+           if(this.cells[x+1][y].value == tile.value/2){
+                score += 10;
+            }            
+        }          
+   }else{
+       //score = -100 * tile.value /8 ;
    }
-   return 0;
+   return score;
 //   if(tilePosition in corners){
 //       console.log(tilePosition);
 //       return 20;
@@ -264,20 +302,22 @@ AIGrid.prototype.smoothEval = function(){
               arr.push(this.cells[i][j].value);
           }
         }
-        if(arr.length == 4 && (arr[0]<arr[1]<arr[2]<arr[3] || arr[0]>arr[1]>arr[2]>arr[3])){
+        if(arr.length == 4 && (arr[0]<=arr[1]<=arr[2]<=arr[3] || arr[0]>=arr[1]>=arr[2]>=arr[3])){
             totalScore += 5;
+            if(arr.length == 4 && arr[0]==arr[1]==arr[2]==arr[3]){
+                totalScore += 25;
+            }
         }
-        if(arr.length == 4 && arr[0]==arr[1]==arr[2]==arr[3]){
-            totalScore += 25;
-        }
-        if(arr.length == 3 && (arr[0]<arr[1]<arr[2] || arr[0]>arr[1]>arr[2])){
+
+        if(arr.length == 3 && (arr[0]<=arr[1]<=arr[2] || arr[0]>=arr[1]>=arr[2])){
             totalScore += 10;
+            if(arr.length == 3 && arr[0]==arr[1]==arr[2]){
+                totalScore += 20;
+            } 
         }
-        if(arr.length == 3 && arr[0]==arr[1]==arr[2]){
-            totalScore += 22;
-        } 
+
         if(arr.length == 2 && arr[0]==arr[1]){
-            totalScore += 20;
+            totalScore += 10;
         }
         arr == Array();
     }
@@ -288,25 +328,49 @@ AIGrid.prototype.smoothEval = function(){
               arr.push(this.cells[j][i].value);
           }
         }
-        if(arr.length == 4 && (arr[0]<arr[1]<arr[2]<arr[3] || arr[0]>arr[1]>arr[2]>arr[3]) ){
+        if(arr.length == 4 && (arr[0]<=arr[1]<=arr[2]<=arr[3] || arr[0]>=arr[1]>=arr[2]>=arr[3]) ){
             totalScore += 5;
+            if(arr.length == 4 && arr[0]==arr[1]==arr[2]==arr[3]){
+                 totalScore += 20;
+            }
         }
-        if(arr.length == 4 && arr[0]==arr[1]==arr[2]==arr[3]){
-            totalScore += 25;
+        if(arr.length == 3 && (arr[0]<=arr[1]<=arr[2] || arr[0]>=arr[1]>=arr[2])){
+            totalScore += 10;
+            if(arr.length == 3 && arr[0]==arr[1]==arr[2]){
+                totalScore += 20;
+             } 
         }
-        if(arr.length == 3 && (arr[0]<arr[1]<arr[2] || arr[0]>arr[1]>arr[2])){
+
+        if(arr.length == 2 && arr[0]==arr[1]){
             totalScore += 10;
         }
-        if(arr.length == 3 && arr[0]==arr[1]==arr[2]){
-            totalScore += 22;
-        } 
-        if(arr.length == 2 && arr[0]==arr[1]){
-            totalScore += 20;
-        }
-        arr == Array();
+        arr = Array();
     }    
-    
+
+//    for(i=0;i<4;i++){
+//        for(j=0;j<4;j++){
+//            if(this.cells[j][i] != null){
+//                 v = this.cells[j][i].value;
+//                 
+//            } 
+//        }
+//    }
     return totalScore;
 }
+
+
+
+//getNeighborTileValue
+//direction  0: up, 1: right, 2: down, 3: left
+//AIGrid.prototype.getNeighborTileValue = function(x,y,direction){
+//    if(this.cells[x][y] == null){
+//        return null;
+//    }
+//    if(direction == 0 && y > 1 && this.cells[x][y-1] != null){
+//        return 
+//    }
+//        
+//}
+    
 
 
