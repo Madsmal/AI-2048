@@ -13,12 +13,14 @@ import javax.swing.JPanel;
 import javax.swing.border.BevelBorder;
 
 public class Board {
+	static int score;
 	static boolean tileMoved;
 	public static Random random1;
 	public static Random random2;
 	public static JPanel panel; 
 	static Tile tileArray[];
 	private static void Board() {
+		score = 0;
 		tileMoved = false;
 		random1 = new Random();
 		random2 = new Random();
@@ -48,16 +50,16 @@ public class Board {
 				int key = arg0.getKeyCode();
 				
 				if (key == KeyEvent.VK_LEFT) {
-					moveLeft();
+					tileArray = moveLeft(tileArray);
 					readyForNextTurn();
 				}else if (key == KeyEvent.VK_RIGHT) {
-					moveRight();
+					tileArray = moveRight(tileArray);
 					readyForNextTurn();
 				} else if (key == KeyEvent.VK_DOWN) {
-					moveDown();
+					tileArray = moveDown(tileArray);
 					readyForNextTurn();
 				} else if (key == KeyEvent.VK_UP) {
-					moveUp();
+					tileArray = moveUp(tileArray);
 
 					readyForNextTurn();
 				}
@@ -84,42 +86,46 @@ public class Board {
 		frame.setResizable(false);
 		frame.setVisible(true);
 	}
-	static void moveLeft(){
+	static Tile[] moveLeft(Tile[] tileArray2){
 		for(int i = 0; i<4;i++){
-			for(int j = 0; j<tileArray.length; j+=4){
-				if((j+i)%4!=0 && tileArray[(j+i)].getSum()!=0){
-					moveTileLeft(j+i);
+			for(int j = 0; j<tileArray2.length; j+=4){
+				if((j+i)%4!=0 && tileArray2[(j+i)].getSum()!=0){
+					moveTileLeft(j+i, tileArray2);
 				}
 			}
 		}
+		return tileArray2;
 	}
-	static void moveRight(){
+	static Tile[] moveRight(Tile[] tileArray){
 		for(int i = 0; i<4;i++){
 			for(int j = 15; j>=0; j-=4){
 				//check if not right side and not empty
 				if((j-i)%4!=3 && tileArray[(j-i)].getSum()!=0){
-					moveTileRight(j-i);
+					moveTileRight(j-i, tileArray);
 				}
 			}
 		}
+		return tileArray;
 	}
 
-	static void moveUp(){
+	static Tile[] moveUp(Tile[] tileArray){
 		for(int i = 0; i<tileArray.length;i++){
 			if(i>3 && tileArray[i].getSum()!=0){
-				moveTileUp(i);
+				moveTileUp(i, tileArray);
 			}
 		}
+		return tileArray;
 	}
-	static void moveDown(){
+	static Tile[] moveDown(Tile[] tileArray){
 		for(int i = 15; i>=0;i--){
 			if(i<12 && tileArray[i].getSum()!=0){
-				moveTileDown(i);
+				moveTileDown(i, tileArray);
 			}
 		}
+		return tileArray;
 		
 	}
-	static void moveTileUp(int i){
+	static void moveTileUp(int i, Tile[] tileArray){
 		int startI = i;
 		int currentTileSum = tileArray[i].getSum();
 		while(i>3){
@@ -133,6 +139,7 @@ public class Board {
 				tileArray[upperTile].setAdded(true);
 				emptyTile(startI);
 				tileMoved = true;
+				score += currentTileSum*2;
 				return;
 			}else{
 				break;
@@ -144,7 +151,7 @@ public class Board {
 		}
 	}
 	
-	static void moveTileDown(int i){
+	static void moveTileDown(int i, Tile[] tileArray){
 		int startI = i;
 		int currentTileSum = tileArray[i].getSum();
 		while(i<12){
@@ -159,6 +166,7 @@ public class Board {
 				tileArray[lowerTile].setAdded(true);
 				emptyTile(startI);
 				tileMoved = true;
+				score += currentTileSum*2;
 				return;
 			}else{
 				//i+=4;
@@ -172,7 +180,7 @@ public class Board {
 		}
 	}
 	
-	static void moveTileRight(int i){
+	static void moveTileRight(int i, Tile[] tileArray){
 		int startI = i;
 		int currentTileSum = tileArray[i].getSum();
 		while(i%4!=3){
@@ -186,6 +194,7 @@ public class Board {
 				tileArray[rightTile].setAdded(true);
 				emptyTile(startI); 
 				tileMoved = true;
+				score += currentTileSum*2;
 				return;
 			}else{
 				break;
@@ -198,21 +207,22 @@ public class Board {
 		}
 	}
 	
-	static void moveTileLeft(int i){
+	static void moveTileLeft(int i, Tile[] tileArray2){
 		int startI = i;
-		int currentTileSum = tileArray[i].getSum();
+		int currentTileSum = tileArray2[i].getSum();
 		while(i%4!=0){
 			int leftTile = i-1;
-			if (tileArray[leftTile].getSum() == 0){
+			if (tileArray2[leftTile].getSum() == 0){
 				tileMoved = true;
 				i--;
 				
-			} else if (tileArray[leftTile].getSum() == currentTileSum && !tileArray[leftTile].getAdded()){
+			} else if (tileArray2[leftTile].getSum() == currentTileSum && !tileArray2[leftTile].getAdded()){
 				i--;
-				tileArray[leftTile].setSum(currentTileSum*2);
-				tileArray[leftTile].setAdded(true);
+				tileArray2[leftTile].setSum(currentTileSum*2);
+				tileArray2[leftTile].setAdded(true);
 				emptyTile(startI);
 				tileMoved = true;
+				score += currentTileSum*2;
 				return;
 			}else{
 				break;
@@ -220,7 +230,7 @@ public class Board {
 			
 		}
 		
-		tileArray[i].setSum(currentTileSum);
+		tileArray2[i].setSum(currentTileSum);
 		if(startI !=i){
 			emptyTile(startI);
 		}
@@ -268,7 +278,36 @@ public class Board {
 		return emptyIndices;
 		
 	}
-	/*public static void printArray(){
+	
+	public static int evaluate(Tile[] newArray) {
+		int sum = 0;
+		// Change weights later?
+		int[] weightMatrix = {
+				10,8,7,5,
+				6,5,4,4,
+				4,3,3,3,
+				2,2,2,2};
+		for(int i = 0; i < newArray.length; i++) {
+			sum += newArray[i].getSum()*weightMatrix[i];
+		}
+		// point 
+		// empty tiles 
+		//
+		
+		return sum;
+	}
+	public static void AIActivate() {
+			//Math.max(moveLeft(tileArray), b)
+			printArray(tileArray);
+			//Tile[] copiedTiles = new Tile[tileArray.length];
+			//System.arraycopy(tileArray, 0, copiedTiles, 0, tileArray.length);
+			Tile[] copiedTiles =  tileArray.clone();
+			Tile[] newTiles =  moveLeft(copiedTiles);
+			
+			
+			printArray(tileArray);
+	}
+	public static void printArray(Tile[] tileArray){
 		
 		for(int i = 0; i<tileArray.length; i++){
 			if(i%4==0){
@@ -277,9 +316,10 @@ public class Board {
 			System.out.print(tileArray[i].getSum() + " ");
 			
 		}
-	}*/
+	}
 	public static void main(String[] args) {
 		Board();
+		AIActivate();
 		
  	}
 
