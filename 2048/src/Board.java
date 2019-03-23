@@ -5,6 +5,7 @@ import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
@@ -87,6 +88,7 @@ public class Board {
 		frame.setVisible(true);
 	}
 	static Tile[] moveLeft(Tile[] tileArray2){
+		//printArray(tileArray);
 		for(int i = 0; i<4;i++){
 			for(int j = 0; j<tileArray2.length; j+=4){
 				if((j+i)%4!=0 && tileArray2[(j+i)].getSum()!=0){
@@ -137,7 +139,7 @@ public class Board {
 				i-=4;
 				tileArray[upperTile].setSum(currentTileSum*2);
 				tileArray[upperTile].setAdded(true);
-				emptyTile(startI);
+				emptyTile(tileArray,startI);
 				tileMoved = true;
 				score += currentTileSum*2;
 				return;
@@ -147,7 +149,7 @@ public class Board {
 		}
 		tileArray[i].setSum(currentTileSum);
 		if(startI!=i){
-			emptyTile(startI);
+			emptyTile(tileArray,startI);
 		}
 	}
 	
@@ -159,12 +161,11 @@ public class Board {
 			if (tileArray[lowerTile].getSum() == 0){
 				i+=4;
 				tileMoved = true;
-				
 			} else if (tileArray[lowerTile].getSum() == currentTileSum && !tileArray[lowerTile].getAdded()){
 				i+=4;
 				tileArray[lowerTile].setSum(currentTileSum*2);
 				tileArray[lowerTile].setAdded(true);
-				emptyTile(startI);
+				emptyTile(tileArray,startI);
 				tileMoved = true;
 				score += currentTileSum*2;
 				return;
@@ -176,7 +177,7 @@ public class Board {
 		}
 		tileArray[i].setSum(currentTileSum);
 		if(startI!=i){
-			emptyTile(startI);
+			emptyTile(tileArray,startI);
 		}
 	}
 	
@@ -192,7 +193,7 @@ public class Board {
 				i++;
 				tileArray[rightTile].setSum(currentTileSum*2);
 				tileArray[rightTile].setAdded(true);
-				emptyTile(startI); 
+				emptyTile(tileArray,startI); 
 				tileMoved = true;
 				score += currentTileSum*2;
 				return;
@@ -203,11 +204,12 @@ public class Board {
 		}
 		tileArray[i].setSum(currentTileSum);
 		if(startI !=i){
-			emptyTile(startI);
+			emptyTile(tileArray,startI);
 		}
 	}
 	
 	static void moveTileLeft(int i, Tile[] tileArray2){
+		//printArray(tileArray);
 		int startI = i;
 		int currentTileSum = tileArray2[i].getSum();
 		while(i%4!=0){
@@ -220,7 +222,7 @@ public class Board {
 				i--;
 				tileArray2[leftTile].setSum(currentTileSum*2);
 				tileArray2[leftTile].setAdded(true);
-				emptyTile(startI);
+				emptyTile(tileArray2,startI);
 				tileMoved = true;
 				score += currentTileSum*2;
 				return;
@@ -232,7 +234,7 @@ public class Board {
 		
 		tileArray2[i].setSum(currentTileSum);
 		if(startI !=i){
-			emptyTile(startI);
+			emptyTile(tileArray2,startI);
 		}
 	}
 	
@@ -253,8 +255,8 @@ public class Board {
 		tileMoved = false;
 	}
 	
-	static void emptyTile(int i){
-		tileArray[i].setSum(0);
+	static void emptyTile(Tile[] tileArray3, int i){
+		tileArray3[i].setSum(0);
 	}
 	static void randomSpawn(){
 		ArrayList<Integer> emptyIndices = getEmptyIndices();
@@ -279,45 +281,382 @@ public class Board {
 		
 	}
 	
-	public static int evaluate(Tile[] newArray) {
-		int sum = 0;
-		// Change weights later?
-		int[] weightMatrix = {
-				10,8,7,5,
-				6,5,4,4,
-				4,3,3,3,
+	public static int evaluate(Tile[] tileArray) {
+		//TODO: Align same numbers 
+		//TODO: Max score 
+		//TODO: if not possible to move other ways than down
+		//TODO: Ascending order of second and third line 
+		//TODO When checking for ascending order, check if something i between them and not ust that everything i ascending 
+		// It try to align the same numbers as there might spawn something and ruin the ascending order 
+		//TODO: Make sure that it will align big numbers from the two top lines.
+		int scorePoints = 0;
+		int scoreValue = 10;
+		float sameNumbersAlignedRatio = 4;
+		float ascendingValue = 1;
+		int numberOfPossibleSpawns = 0;
+		float tempEval = 0;
+		float sameNumbersAlignedPoints;
+		int tempScore = score;
+		float[] weightMatrix = {
+				30,25,20,19,
+				8,10,10,10,
+				6,5,5,5,
 				2,2,2,2};
-		for(int i = 0; i < newArray.length; i++) {
-			sum += newArray[i].getSum()*weightMatrix[i];
-		}
-		// point 
-		// empty tiles 
-		//
+		int direction = 0;
 		
-		return sum;
+		//check left 
+		Tile[] moveLeftTiles = moveLeft(cloneTiles(tileArray));
+		float leftEval = 0;
+		float weightBeforeSpawn = 0;	
+		float ascendingEval = 0;
+		for(int j = 0; j<moveLeftTiles.length; j++){	
+			weightBeforeSpawn += moveLeftTiles[j].getSum()*weightMatrix[j];
+		}
+		numberOfPossibleSpawns = 0;
+		tempEval = 0;
+		scorePoints = (score-tempScore)*scoreValue;
+		for (int i = 0; i<moveLeftTiles.length; i++){
+			if (moveLeftTiles[i].getSum() == 0){
+				numberOfPossibleSpawns += 2;
+				//do this with other measurable parameters 
+				moveLeftTiles[i].setSum(2);
+				ascendingEval = getAscendingPoints(moveLeftTiles, weightMatrix)*ascendingValue;
+				
+				sameNumbersAlignedPoints = getSameNumbersAlignedPoints(moveLeftTiles, weightMatrix);
+				//some eval algorithm
+				//System.out.println("sameNumbersAlignedPoints: " + sameNumbersAlignedPoints);
+			
+		
+				//compare all evals here 
+				
+				tempEval += (float) ((scorePoints + sameNumbersAlignedPoints/sameNumbersAlignedRatio + ascendingEval 
+						+ weightMatrix[i]*2+weightBeforeSpawn)*0.9);
+				
+				/*if (tempEval>leftEval){
+					leftEval = tempEval;
+				}*/
+				
+				
+				moveLeftTiles[i].setSum(4);
+				ascendingEval = getAscendingPoints(moveLeftTiles, weightMatrix)*ascendingValue;
+				sameNumbersAlignedPoints = getSameNumbersAlignedPoints(moveLeftTiles, weightMatrix);
+				tempEval += (float) ((scorePoints + sameNumbersAlignedPoints/sameNumbersAlignedRatio + ascendingEval + weightMatrix[i]*4+weightBeforeSpawn)*0.1);
+				/*if (tempEval>leftEval){
+					leftEval = tempEval;
+				}*/
+				moveLeftTiles[i].setSum(0);
+			}
+		}
+		if(numberOfPossibleSpawns !=0){
+			leftEval = tempEval/numberOfPossibleSpawns;
+		} else{
+			leftEval = 0;
+		}
+		
+		score = tempScore;
+		Tile[] moveRightTiles = moveRight(cloneTiles(tileArray));
+		float rightEval = 0;
+		weightBeforeSpawn = 0;	
+		for(int j = 0; j<moveRightTiles.length; j++){	
+			weightBeforeSpawn += moveRightTiles[j].getSum()*weightMatrix[j];
+		}
+		tempEval = 0;
+		numberOfPossibleSpawns = 0;
+		scorePoints = (score-tempScore)*scoreValue;
+		for (int i = 0; i<moveRightTiles.length; i++){
+			
+			if (moveRightTiles[i].getSum() == 0){
+				numberOfPossibleSpawns += 2;
+				//do this with other measurable parameters 
+				moveRightTiles[i].setSum(2);
+				ascendingEval = getAscendingPoints(moveRightTiles, weightMatrix)*ascendingValue;
+				sameNumbersAlignedPoints = getSameNumbersAlignedPoints(moveRightTiles, weightMatrix);
+				//moveLeftTiles[i].setSum(4);
+				//some eval algorithm
+				//compare all evals here 
+				tempEval += (float) ((scorePoints + sameNumbersAlignedPoints/sameNumbersAlignedRatio + ascendingEval + weightMatrix[i]*2+weightBeforeSpawn)*0.9);
+				
+				
+				/*if (tempEval>rightEval){
+					rightEval = tempEval;
+				}*/
+				moveRightTiles[i].setSum(4);
+				ascendingEval = getAscendingPoints(moveRightTiles, weightMatrix)*ascendingValue;
+				sameNumbersAlignedPoints = getSameNumbersAlignedPoints(moveRightTiles, weightMatrix);
+				
+				tempEval += (float) ((scorePoints + sameNumbersAlignedPoints/sameNumbersAlignedRatio + ascendingEval + weightMatrix[i]*4+weightBeforeSpawn)*0.1);
+				/*if (tempEval>rightEval){
+					rightEval = tempEval;
+				}*/
+				
+				moveRightTiles[i].setSum(0);
+			}
+			if(numberOfPossibleSpawns !=0){
+				rightEval = tempEval/numberOfPossibleSpawns;
+			} else{
+				rightEval = 0;
+			}
+		}
+		score = tempScore;
+		Tile[] moveDownTiles = moveDown(cloneTiles(tileArray));
+		float downEval = 0;
+		weightBeforeSpawn = 0;	
+		for(int j = 0; j<moveDownTiles.length; j++){	
+			weightBeforeSpawn += moveDownTiles[j].getSum()*weightMatrix[j];
+		}
+		tempEval = 0;
+		numberOfPossibleSpawns = 0;
+		scorePoints = (score-tempScore)*scoreValue;
+		for (int i = 0; i<moveDownTiles.length; i++){
+			if (moveDownTiles[i].getSum() == 0){
+				numberOfPossibleSpawns += 2;
+				//do this with other measurable parameters 
+				/*moveLeftTiles[i].setSum(2);
+				moveLeftTiles[i].setSum(4);
+				//some eval algorithm
+			
+				moveLeftTiles[i].setSum(0);*/
+				//compare all evals here 
+				moveDownTiles[i].setSum(2);
+				ascendingEval = getAscendingPoints(moveDownTiles, weightMatrix)*ascendingValue;
+				
+				sameNumbersAlignedPoints = getSameNumbersAlignedPoints(moveDownTiles, weightMatrix);
+				
+				tempEval += (float) ((scorePoints + sameNumbersAlignedPoints/sameNumbersAlignedRatio + ascendingEval + weightMatrix[i]*2+weightBeforeSpawn)*0.9);
+				/*if (tempEval>downEval){
+					downEval = tempEval;
+				}*/
+				
+				
+				moveDownTiles[i].setSum(4);
+				ascendingEval = getAscendingPoints(moveDownTiles, weightMatrix)*ascendingValue;
+				
+				sameNumbersAlignedPoints = getSameNumbersAlignedPoints(moveDownTiles, weightMatrix);
+				
+				tempEval += (float) ((scorePoints + sameNumbersAlignedPoints/sameNumbersAlignedRatio + ascendingEval + weightMatrix[i]*4+weightBeforeSpawn)*0.1);
+				/*if (tempEval>downEval){
+					downEval = tempEval;
+				}*/
+			}
+			if(numberOfPossibleSpawns !=0){
+				downEval = tempEval/numberOfPossibleSpawns;
+			} else{
+				downEval = 0;
+			}
+			
+		}
+		score = tempScore;
+		Tile[] moveUpTiles = moveUp(cloneTiles(tileArray));
+		float upEval = 0;	
+		weightBeforeSpawn = 0;	
+		for(int j = 0; j<moveUpTiles.length; j++){	
+			weightBeforeSpawn += moveUpTiles[j].getSum()*weightMatrix[j];
+		}
+		tempEval = 0;
+		numberOfPossibleSpawns = 0;
+		scorePoints = (score-tempScore)*scoreValue;
+		for (int i = 0; i<moveUpTiles.length; i++){
+			if (moveUpTiles[i].getSum() == 0){
+				numberOfPossibleSpawns += 2;
+				//do this with other measurable parameters 
+				/*moveLeftTiles[i].setSum(2);
+				moveLeftTiles[i].setSum(4);
+				//some eval algorithm
+				
+				moveLeftTiles[i].setSum(0);*/
+				//compare all evals here 
+				moveUpTiles[i].setSum(2);
+				ascendingEval = getAscendingPoints(moveUpTiles, weightMatrix)*ascendingValue;
+				
+				sameNumbersAlignedPoints = getSameNumbersAlignedPoints(moveUpTiles, weightMatrix);
+				
+				tempEval += (float) ((scorePoints + sameNumbersAlignedPoints/sameNumbersAlignedRatio + ascendingEval + weightMatrix[i]*2+weightBeforeSpawn)*0.9);
+				/*if (tempEval>upEval){
+					upEval = tempEval;
+				}*/
+				moveUpTiles[i].setSum(4);
+				ascendingEval = getAscendingPoints(moveUpTiles, weightMatrix)*ascendingValue;
+				sameNumbersAlignedPoints = getSameNumbersAlignedPoints(moveUpTiles, weightMatrix);
+				tempEval += (float) ((scorePoints + sameNumbersAlignedPoints/sameNumbersAlignedRatio + ascendingEval + weightMatrix[i]*4+weightBeforeSpawn)*0.1);
+				/*if (tempEval>upEval){
+					upEval = tempEval;
+				}*/
+			}
+			if(numberOfPossibleSpawns !=0){
+				upEval = tempEval/numberOfPossibleSpawns;
+			} else{
+				upEval = 0;
+			}
+		}
+		score = tempScore;
+		/*System.out.println("leftEval: " + leftEval);
+		System.out.println("rightEval: " + rightEval);
+		System.out.println("upEval: " + upEval);
+		System.out.println("downEval: " + downEval);
+		System.out.println("ascendingEval: " + ascendingEval);*/
+		float max = Math.max(Math.max(Math.max(leftEval,rightEval),downEval),upEval);
+		if (max == leftEval){
+			tileArray = moveLeft(tileArray);
+			readyForNextTurn();
+		}
+		else if( max == rightEval){
+			tileArray = moveRight(tileArray);
+			readyForNextTurn();
+		}
+		else if( max == downEval){
+			tileArray = moveDown(tileArray);
+			readyForNextTurn();
+		}
+		else if (max == upEval){
+			tileArray = moveUp(tileArray);
+			readyForNextTurn();
+		} else {
+			System.out.println("error");
+		}
+		//System.out.println(getSameNumbersAlignedPoints(tileArray, weightMatrix));
+		System.out.println("score: " +  score);
+		return direction;
 	}
-	public static void AIActivate() {
+	public static float getAscendingPoints(Tile[] tiles, float[] weights){ 
+		float ascendingPoints = 0;
+		if (tiles[0].getSum()>=tiles[1].getSum()&& tiles[1].getSum()>=tiles[2].getSum()&& tiles[2].getSum()>=tiles[3].getSum()){
+			ascendingPoints += tiles[0].getSum()*weights[0];
+		}
+		/*if ((tiles[4].getSum()>=tiles[5].getSum()&& tiles[5].getSum()>=tiles[6].getSum()&& tiles[6].getSum()>=tiles[7].getSum()) ||
+				(tiles[7].getSum()>=tiles[6].getSum()&& tiles[6].getSum()>=tiles[5].getSum()&& tiles[5].getSum()>=tiles[4].getSum()) ){
+			ascendingPoints += tiles[0].getSum()*weights[0]/2;
+		}*/
+		return ascendingPoints;
+	}
+	 public static float getSameNumbersAlignedPoints(Tile[] tiles, float[] weights){
+		float points = 0; 
+		boolean checkNext;
+		for(int i = 0; i < tiles.length; i++){
+			if(tiles[i].getSum()!=0){
+			checkNext = false;;
+			//check right
+			for(int j = 1; j < 4; j++){
+				if ((i+j)%4 ==0){
+					break;
+				}
+				if(tiles[i+j].getSum()!=0){
+					if(tiles[i].getSum()==tiles[i+j].getSum()){	
+						points += tiles[i].getSum()*weights[i];
+						checkNext = true;
+					}
+					break;					
+				}
+			}
+			if (checkNext){
+				continue;
+			}
+			
+			//checkLeft
+			for(int k = 1; k < 4; k++){
+				if ((i-k)%4 ==3 || (i-k)<0){
+					break;
+				}
+				if(tiles[i-k].getSum()!=0){
+					if(tiles[i].getSum()==tiles[i-k].getSum()){	
+						points += tiles[i].getSum()*weights[i];
+						checkNext = true;
+					}
+					break;					
+				}
+			}
+			if (checkNext){
+				continue;
+			}
+			
+			//check down
+			for(int l = 4; l < 13; l+=4){
+				if ((i+l)>15){
+					break;
+				}
+				if(tiles[i+l].getSum()!=0){
+					if(tiles[i].getSum()==tiles[i+l].getSum()){	
+						points += tiles[i].getSum()*weights[i];
+						checkNext = true;
+					}
+					break;					
+				}
+			}
+			if (checkNext){
+				continue;
+			}
+			
+			//check up
+			for(int m = 4; m < 13; m+=4){
+				if ((i-m)<0){
+					break;
+				}
+				if(tiles[i-m].getSum()!=0){
+					if(tiles[i].getSum()==tiles[i-m].getSum()){	
+						points += tiles[i].getSum()*weights[i];
+					}
+					break;					
+				}
+			}
+			}
+		
+		
+		}
+		return points;
+	 }
+	
+	public static void AIActivate() throws InterruptedException {
 			//Math.max(moveLeft(tileArray), b)
-			printArray(tileArray);
+
 			//Tile[] copiedTiles = new Tile[tileArray.length];
 			//System.arraycopy(tileArray, 0, copiedTiles, 0, tileArray.length);
-			Tile[] copiedTiles =  tileArray.clone();
-			Tile[] newTiles =  moveLeft(copiedTiles);
-			
-			
-			printArray(tileArray);
+		while(true){
+		Thread.sleep(50);
+		evaluate(tileArray);	
+			/*int evalLeft = evaluate(moveLeft(cloneTiles(tileArray)));
+			int evalRight = evaluate(moveRight(cloneTiles(tileArray)));
+			int evalDown = evaluate(moveDown(cloneTiles(tileArray)));
+			int evalUp =  evaluate(moveUp(cloneTiles(tileArray)));
+			int max = Math.max(Math.max(Math.max(evalLeft,evalRight),evalDown),evalUp);
+			if (max == evalLeft){
+				tileArray = moveLeft(tileArray);
+				readyForNextTurn();
+			}
+			else if( max == evalRight){
+				tileArray = moveRight(tileArray);
+				readyForNextTurn();
+			}
+			else if( max == evalDown){
+				tileArray = moveDown(tileArray);
+				readyForNextTurn();
+			}
+			else{
+				tileArray = moveUp(tileArray);
+				readyForNextTurn();
+			}*/
+		//i++;
+		}
+			//printArray(copiedTiles);
 	}
-	public static void printArray(Tile[] tileArray){
+	public static void printArray(Tile[] tileArray2){
 		
-		for(int i = 0; i<tileArray.length; i++){
+		for(int i = 0; i<tileArray2.length; i++){
 			if(i%4==0){
 				System.out.println(" ");
 			}
-			System.out.print(tileArray[i].getSum() + " ");
-			
+			System.out.print(tileArray2[i].getSum() + " ");
 		}
 	}
-	public static void main(String[] args) {
+	public static Tile[] cloneTiles(Tile[] tileArray2){
+		Tile[] clonedTiles = new Tile[tileArray2.length];
+		for(int i = 0; i<tileArray2.length; i++){
+			Tile newTile = new Tile();
+			newTile.setSum(tileArray2[i].getSum());
+			newTile.setAdded(tileArray2[i].getAdded());
+			clonedTiles[i] = newTile;
+		}
+		return clonedTiles;
+	}
+	public static void main(String[] args) throws InterruptedException {
 		Board();
 		AIActivate();
 		
