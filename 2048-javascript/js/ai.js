@@ -1,5 +1,5 @@
-
-
+var MAX_TILE_VALUE = 0;
+var MAX_TILE_NUM = 0;
 function AI(grid) {
     this.grid = grid;
 }
@@ -14,6 +14,11 @@ AI.prototype.eval = function () {
     var emptyCells = this.grid.availableCells().length;
     var smoothScore = this.grid.smoothEval();
     var largestTilePositionScore = this.grid.largestTilePositionEval();
+    if(largestTilePositionScore > 0){
+//        console.log(this.grid.findLargestTile());
+//        console.log(code);
+//        console.log(largestTilePositionScore);
+    }
     //console.log(largestTilePositionScore*10)
 //    if(largestTilePositionScore !=0)
 //        console.log(largestTilePositionScore);
@@ -37,7 +42,6 @@ AI.prototype.search = function (depth, alpha, beta, positions, cutoffs,playerTur
     var bestScore = 0;
     var searchBestResult = {};
     searchBestResult.score = bestScore;
-    
     
     
     if(playerTurn){
@@ -120,7 +124,8 @@ AI.prototype.search = function (depth, alpha, beta, positions, cutoffs,playerTur
         var addedNumber;
         var worstTile = null;
         var worstScore = 10000;
-        var tiles = {};
+        var tiles = {};//worst tile
+        var tiles2 = Array();//all tile
         
         for(var i=0;i<end;i++){
             addedNumber = 2;
@@ -137,6 +142,7 @@ AI.prototype.search = function (depth, alpha, beta, positions, cutoffs,playerTur
             }
             //console.log((tiles[score] instanceof Array));
             tiles[score].push(newTile);
+            tiles2.push(newTile);
             
             addedNumber = 4;
             var newTile = new Tile(cells[i],addedNumber);
@@ -152,12 +158,15 @@ AI.prototype.search = function (depth, alpha, beta, positions, cutoffs,playerTur
                 tiles[score] = new Array();
             }
             tiles[score].push(newTile);
+            tiles2.push(newTile);
         }
         
         
         var newGrid = this.grid.clone();
         var newAI = new AI(newGrid);
         //console.log(tiles[worstScore]);
+       // for(i=0;i<tiles2.length;i++){
+       tiles[worstScore] = tiles2;
         for(i=0;i<tiles[worstScore].length;i++){
             worstTile = tiles[worstScore][i];
             newAI.grid.insertTile(worstTile);
@@ -206,7 +215,8 @@ AI.prototype.computerTurnSearch = function(){
 
 // performs a search and returns the best move
 AI.prototype.getBest = function () {
-
+    MAX_TILE_VALUE = this.grid.findLargestTile().value;
+    MAX_TILE_NUM = this.grid.getTileNum(MAX_TILE_VALUE);
     return this.iterativeDeep();
 }
 
@@ -214,7 +224,7 @@ AI.prototype.getBest = function () {
 AI.prototype.iterativeDeep = function () {
 
     var start = (new Date()).getTime();
-    var depth = 4;
+    var depth = 1;
     var best;
 
 // can't limit the excution time of function in javascript!
@@ -230,8 +240,9 @@ AI.prototype.iterativeDeep = function () {
         depth++;
        
     } while ((new Date()).getTime() - start < minSearchTime);
-    //console.log(best);
-    //console.log(depth);
+    console.log(best);
+    //alert("here")
+   //console.log(depth);
     return best;
 }
 
