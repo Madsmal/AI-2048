@@ -225,8 +225,6 @@ AI.prototype.iterativeDeep = function () {
     var start = (new Date()).getTime();
     var depth = 2;
     var best;
-    console.log(this.grid.monotonicity3());
-    console.log(this.grid.monotonicity2());
     //console.log(this.grid.cells[3][1].value);return;
 // can't limit the excution time of function in javascript!
 //    setTimeout(this.search(depth, -10000, 10000, 0, 0),minSearchTime); 

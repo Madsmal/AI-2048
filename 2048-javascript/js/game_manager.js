@@ -1,6 +1,6 @@
 /*added by Li*/
-animationDelay=50;
-minSearchTime = 50; 
+animationDelay=20;
+minSearchTime = 20; 
 
 function GameManager(size, InputManager, Actuator, StorageManager) {
   this.size           = size; // Size of the grid

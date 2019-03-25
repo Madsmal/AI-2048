@@ -363,14 +363,14 @@ AIGrid.prototype.smoothEval = function(){
           }
         }
         if(arr.length == 4 && (arr[0]<=arr[1]<=arr[2]<=arr[3] || arr[0]>=arr[1]>=arr[2]>=arr[3]) && (arr[3]<=4*arr[0] || arr[0]<=4*arr[3])){
-            totalScore += 10;
+            //totalScore += 10;
             if(arr.length == 4 && arr[0]==arr[1]==arr[2]==arr[3]){
                 totalScore += 10;
             }
         }
 
         if(arr.length == 3 && (arr[0]<=arr[1]<=arr[2] || arr[0]>=arr[1]>=arr[2])){
-            totalScore += 10;
+            //totalScore += 10;
             if(arr.length == 3 && arr[0]==arr[1]==arr[2]){
                 totalScore += 10;
             } 
@@ -389,13 +389,13 @@ AIGrid.prototype.smoothEval = function(){
           }
         }
         if(arr.length == 4 && (arr[0]<=arr[1]<=arr[2]<=arr[3] || arr[0]>=arr[1]>=arr[2]>=arr[3]) && (arr[3]<=4*arr[0] || arr[0]<=4*arr[3]) ){
-            totalScore += 10;
+            //totalScore += 10;
             if(arr.length == 4 && arr[0]==arr[1]==arr[2]==arr[3]){
                  totalScore += 10;
             }
         }
         if(arr.length == 3 && (arr[0]<=arr[1]<=arr[2] || arr[0]>=arr[1]>=arr[2])){
-            totalScore += 10;
+            //totalScore += 10;
             if(arr.length == 3 && arr[0]==arr[1]==arr[2]){
                 totalScore += 10;
              } 
@@ -534,8 +534,42 @@ AIGrid.prototype.monotonicity3 = function(){
 //        0;  
                 var nextValue = Math.log(this.cellContent( this.indexes[x][next] ).value) / Math.log(2); 
                 //if (currentValue > nextValue) {
+                if (nextValue > currentValue) {
+                    if(x == 0){
+                        score += (currentValue - nextValue)*2;
+                    }else{
+                        score += (currentValue - nextValue)*2;
+                    }
+                }
+                next ++;
+            }
+        }
+    }
+    
+    for( var y=0;y<2;y++){
+        for(var current=0; current<3;current++){
+            var next = current+1;
+            if(!this.cellOccupied( {x:current,y:y})){
+                continue;
+            }
+
+            var currentValue = Math.log(this.cellContent( this.indexes[current][y] ).value) / Math.log(2);
+            while(next < 4){
+                if(!this.cellOccupied({x:next,y:y})){
+                    next ++;
+                    continue;
+                }
+    //                var nextValue = this.cellOccupied({x:x, y:next}) ?
+    //        Math.log(this.cellContent( this.indexes[x][next] ).value) / Math.log(2) :
+    //        0;  
+                var nextValue = Math.log(this.cellContent( this.indexes[next][y] ).value) / Math.log(2); 
+                //if (currentValue > nextValue) {
                 if (nextValue > currentValue) {    
-                    score += currentValue - nextValue;
+                    if(y == 0){
+                        score += (currentValue - nextValue)*2;
+                    }else{
+                        score += (currentValue - nextValue)*2;
+                    }
                 }
                 next ++;
             }
@@ -578,69 +612,7 @@ function writeObj(obj){
 
 
 
-//can't use it
-
-
-// measures how monotonic the grid is. This means the values of the tiles are strictly increasing
-// or decreasing in both the left/right and up/down directions
-AIGrid.prototype.monotonicity2 = function() {
-  // scores for all four directions
-  var totals = [0, 0, 0, 0];
-
-  // up/down direction
-  for (var x=0; x<4; x++) {
-    var current = 0;
-    var next = current+1;
-    while ( next<4 ) {
-      while ( next<4 && !this.cellOccupied( this.indexes[x][next] )) {
-        next++;
-      }
-      if (next>=4) { next--; }
-      var currentValue = this.cellOccupied({x:x, y:current}) ?
-        Math.log(this.cellContent( this.indexes[x][current] ).value) / Math.log(2) :
-        0;
-      var nextValue = this.cellOccupied({x:x, y:next}) ?
-        Math.log(this.cellContent( this.indexes[x][next] ).value) / Math.log(2) :
-        0;
-      if (currentValue > nextValue) {
-        totals[0] += nextValue - currentValue;
-      } else if (nextValue > currentValue) {
-        totals[1] += currentValue - nextValue;
-      }
-      current = next;
-      next++;
-    }
-  }
-
-  // left/right direction
-  for (var y=0; y<4; y++) {
-    var current = 0;
-    var next = current+1;
-    while ( next<4 ) {
-      while ( next<4 && !this.cellOccupied( this.indexes[next][y] )) {
-        next++;
-      }
-      if (next>=4) { next--; }
-      var currentValue = this.cellOccupied({x:current, y:y}) ?
-        Math.log(this.cellContent( this.indexes[current][y] ).value) / Math.log(2) :
-        0;
-      var nextValue = this.cellOccupied({x:next, y:y}) ?
-        Math.log(this.cellContent( this.indexes[next][y] ).value) / Math.log(2) :
-        0;
-      if (currentValue > nextValue) {
-        totals[2] += nextValue - currentValue;
-      } else if (nextValue > currentValue) {
-        totals[3] += currentValue - nextValue;
-      }
-      current = next;
-      next++;
-    }
-  }
-  //return 1;
-  return totals[1];
-  //return Math.max(totals[0], totals[1]) + Math.max(totals[2], totals[3]);
-}
-
+//can't use i
 
 //  use a simple datastructure to store the value in an array
 AIGrid.prototype.indexes = [];
