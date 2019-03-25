@@ -19,16 +19,15 @@ AI.prototype.eval = function () {
 //        console.log(code);
 //        console.log(largestTilePositionScore);
     }
-    //console.log(largestTilePositionScore*10)
-//    if(largestTilePositionScore !=0)
-//        console.log(largestTilePositionScore);
-    //return emptyCells * emptyCellsWeight;
-    //return Math.floor(Math.random() * 100);
-     //bestMove = Math.floor(Math.random() * (end - start + 1) + start);
-    //return emptyCells;
+    
+    var monotonicity2Score = this.grid.monotonicity3();
+    //console.log(this.grid.monotonicity3());
+//    console.log(this.grid.monotonicity2());
+    //console.log(monotonicity2Score);
+    
     return emptyCells * emptyCellsWeight 
             + smoothScore * smoothWeight
-            + largestTilePositionWeight * largestTilePositionScore;
+            + largestTilePositionWeight * largestTilePositionScore +monotonicity2Score*2;
     
 }
 
@@ -224,9 +223,11 @@ AI.prototype.getBest = function () {
 AI.prototype.iterativeDeep = function () {
 
     var start = (new Date()).getTime();
-    var depth = 1;
+    var depth = 2;
     var best;
-
+    console.log(this.grid.monotonicity3());
+    console.log(this.grid.monotonicity2());
+    //console.log(this.grid.cells[3][1].value);return;
 // can't limit the excution time of function in javascript!
 //    setTimeout(this.search(depth, -10000, 10000, 0, 0),minSearchTime); 
 //    return;
@@ -240,7 +241,7 @@ AI.prototype.iterativeDeep = function () {
         depth++;
        
     } while ((new Date()).getTime() - start < minSearchTime);
-    console.log(best);
+   //console.log(best);
     //alert("here")
    //console.log(depth);
     return best;

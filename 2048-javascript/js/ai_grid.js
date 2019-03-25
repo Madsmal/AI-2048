@@ -442,8 +442,8 @@ AIGrid.prototype.cellMonotonicity  = function (cell){
         }
     }
     
-    if(arrX.length >= 3){
-        if(x == 0){//top
+    if(arrX.length >= 5){
+        if(x == 0){//top->down
             for(i=1;i<arrX.length;i++){
                 if(arrX[i-1] == arrX[i] || arrX[i-1] == 2* arrX[i]){
                     factorX += (arrX.length-i)*(arrX.length-i);
@@ -475,10 +475,10 @@ AIGrid.prototype.cellMonotonicity  = function (cell){
     }
 
     if(arrY.length >= 3){
-        if(y == 0){//left
+        if(y == 0){//left->right
             for(i=1;i<arrY.length;i++){
                 if(arrY[i-1] == arrY[i] || arrY[i-1] == 2* arrY[i]){
-                    factorY += (arrY.length-i)*(arrY.length-i);
+                    factorY += Math.log(arrY[i])*(arrY.length-i);
                 }
             }
             if(arrY[0] == arrY[1] || arrY[0] == 2*arrY[1]){
@@ -511,6 +511,41 @@ AIGrid.prototype.cellMonotonicity  = function (cell){
 }
 
 
+//evaluate the all grid monotonicity in up-to-down direction
+AIGrid.prototype.monotonicity3 = function(){
+    var score =0;
+    for( var x=0;x<4;x++){
+        for(var current=0; current<3;current++){
+            var next = current+1;
+            if(!this.cellOccupied( {x:x,y:current})){
+                continue;
+            }
+            //var currentValue = this.cellOccupied({x:x, y:current}) ?
+        //Math.log(this.cellContent( this.indexes[x][current] ).value) / Math.log(2) :
+        //0;  
+            var currentValue = Math.log(this.cellContent( this.indexes[x][current] ).value) / Math.log(2);
+            while(next < 4){
+                if(!this.cellOccupied({x:x,y:next})){
+                    next ++;
+                    continue;
+                }
+//                var nextValue = this.cellOccupied({x:x, y:next}) ?
+//        Math.log(this.cellContent( this.indexes[x][next] ).value) / Math.log(2) :
+//        0;  
+                var nextValue = Math.log(this.cellContent( this.indexes[x][next] ).value) / Math.log(2); 
+                //if (currentValue > nextValue) {
+                if (nextValue > currentValue) {    
+                    score += currentValue - nextValue;
+                }
+                next ++;
+            }
+        }
+    }
+    //console.log(score);
+    return score;
+}
+
+
 //getNeighborTileValue
 //direction  0: up, 1: right, 2: down, 3: left
 //AIGrid.prototype.getNeighborTileValue = function(x,y,direction){
@@ -532,4 +567,86 @@ function writeObj(obj){
  description+=i+" = "+property+"\n"; 
  } 
  console.log(description); 
+}
+
+
+
+
+
+
+
+
+
+
+//can't use it
+
+
+// measures how monotonic the grid is. This means the values of the tiles are strictly increasing
+// or decreasing in both the left/right and up/down directions
+AIGrid.prototype.monotonicity2 = function() {
+  // scores for all four directions
+  var totals = [0, 0, 0, 0];
+
+  // up/down direction
+  for (var x=0; x<4; x++) {
+    var current = 0;
+    var next = current+1;
+    while ( next<4 ) {
+      while ( next<4 && !this.cellOccupied( this.indexes[x][next] )) {
+        next++;
+      }
+      if (next>=4) { next--; }
+      var currentValue = this.cellOccupied({x:x, y:current}) ?
+        Math.log(this.cellContent( this.indexes[x][current] ).value) / Math.log(2) :
+        0;
+      var nextValue = this.cellOccupied({x:x, y:next}) ?
+        Math.log(this.cellContent( this.indexes[x][next] ).value) / Math.log(2) :
+        0;
+      if (currentValue > nextValue) {
+        totals[0] += nextValue - currentValue;
+      } else if (nextValue > currentValue) {
+        totals[1] += currentValue - nextValue;
+      }
+      current = next;
+      next++;
+    }
+  }
+
+  // left/right direction
+  for (var y=0; y<4; y++) {
+    var current = 0;
+    var next = current+1;
+    while ( next<4 ) {
+      while ( next<4 && !this.cellOccupied( this.indexes[next][y] )) {
+        next++;
+      }
+      if (next>=4) { next--; }
+      var currentValue = this.cellOccupied({x:current, y:y}) ?
+        Math.log(this.cellContent( this.indexes[current][y] ).value) / Math.log(2) :
+        0;
+      var nextValue = this.cellOccupied({x:next, y:y}) ?
+        Math.log(this.cellContent( this.indexes[next][y] ).value) / Math.log(2) :
+        0;
+      if (currentValue > nextValue) {
+        totals[2] += nextValue - currentValue;
+      } else if (nextValue > currentValue) {
+        totals[3] += currentValue - nextValue;
+      }
+      current = next;
+      next++;
+    }
+  }
+  //return 1;
+  return totals[1];
+  //return Math.max(totals[0], totals[1]) + Math.max(totals[2], totals[3]);
+}
+
+
+//  use a simple datastructure to store the value in an array
+AIGrid.prototype.indexes = [];
+for (var x=0; x<4; x++) {
+  AIGrid.prototype.indexes.push([]);
+  for (var y=0; y<4; y++) {
+    AIGrid.prototype.indexes[x].push( {x:x, y:y} );
+  }
 }

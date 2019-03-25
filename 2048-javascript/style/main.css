@@ -528,7 +528,8 @@ hr {
   line-height: 42px;
   display: block;
   text-align: center;
-  float: right; }
+  margin-right: 30px;
+  float: left; }
 
 .run-button {
   display: inline-block;
@@ -541,7 +542,7 @@ hr {
   line-height: 42px;
   display: block;
   text-align: center;
-  float: right; }
+  float: left; }
 
 .game-explanation {
   margin-top: 50px; }
