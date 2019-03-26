@@ -564,12 +564,13 @@ AIGrid.prototype.monotonicity3 = function(){
     //        0;  
                 var nextValue = Math.log(this.cellContent( this.indexes[next][y] ).value) / Math.log(2); 
                 //if (currentValue > nextValue) {
-                if (nextValue > currentValue) {    
+                if (nextValue > currentValue && y == 0) {    
                     if(y == 0){
                         score += (currentValue - nextValue)*2;
-                    }else{
-                        score += (currentValue - nextValue)*2;
                     }
+                }
+                if(nextValue < currentValue && y == 1){
+                     score += (nextValue - currentValue);
                 }
                 next ++;
             }
