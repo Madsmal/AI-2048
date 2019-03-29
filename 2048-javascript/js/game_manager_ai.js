@@ -1,40 +1,62 @@
 /*inherit class GameManager*/
-function GameManagerAI(size, InputManager, Actuator, StorageManager) {
-  GameManager.apply(this,arguments);  
-  
-  this.aiAutoRunning = false;  
-  this.inputManager.on('run', function() {
-    if (this.aiAutoRunning) {
-      this.aiAutoRunning = false;
-      document.getElementById('ai-auto-run').innerHTML = "AI";
-    } else {
-      this.aiAutoRunning = true;
-      this.run();
-      document.getElementById('ai-auto-run').innerHTML = "stop";
-    }
-  }.bind(this));
-  
-  this.setup();
-} 
 
-GameManagerAI.prototype = deepClone(GameManager.prototype) ;
+
+class GameManagerAI extends GameManager{
+    constructor(size, InputManager, Actuator, StorageManager,aiRunButton){
+        super(size, InputManager, Actuator, StorageManager);
+        this.aiAutoRunning = false;
+        this.aiRunButton = aiRunButton;
+        self = this;
+        this.aiRunButton.onclick = function(){
+          if (self.aiAutoRunning) {
+            self.aiAutoRunning = false;
+            document.getElementById('ai-auto-run').innerHTML = "AI";
+          } else {
+            self.aiAutoRunning = true;
+            self.run();
+            document.getElementById('ai-auto-run').innerHTML = "stop";
+          }          
+        }
+        this.setup();
+    }
+    
+}
+//function GameManagerAI(size, InputManager, Actuator, StorageManager,aiRunButton) {
+//  GameManager.apply(this,arguments);  
+//  this.aiAutoRunning = false;  
+//  
+//  this.aiRunButton = aiRunButton;
+//  this.aiRunButton.onclick = function(){
+//    if (this.aiAutoRunning) {
+//      this.aiAutoRunning = false;
+//      document.getElementById('ai-auto-run').innerHTML = "AI";
+//    } else {
+//      this.aiAutoRunning = true;
+//      this.run();
+//      document.getElementById('ai-auto-run').innerHTML = "stop";
+//    }  
+//  }
+//  this.setup();
+//} 
+//
+//GameManagerAI.prototype = deepClone(GameManager.prototype) ;
 
 
 
 
 // Set up the game
 GameManagerAI.prototype.setup = function () {
-  var previousState = this.storageManager.getGameState();
+//  var previousState = this.storageManager.getGameState();
 
   // Reload the game from a previous game if present
-  if (previousState) {
-    this.grid        = new AIGrid(previousState.grid.size,
-                                previousState.grid.cells); // Reload grid
-    this.score       = previousState.score;
-    this.over        = previousState.over;
-    this.won         = previousState.won;
-    this.keepPlaying = previousState.keepPlaying;
-  } else {
+//  if (previousState) {
+//    this.grid        = new AIGrid(previousState.grid.size,
+//                                previousState.grid.cells); // Reload grid
+//    this.score       = previousState.score;
+//    this.over        = previousState.over;
+//    this.won         = previousState.won;
+//    this.keepPlaying = previousState.keepPlaying;
+//  } else {
     this.grid        = new AIGrid(this.size);
     this.score       = 0;
     this.over        = false;
@@ -43,7 +65,7 @@ GameManagerAI.prototype.setup = function () {
 
     // Add the initial tiles
     this.addStartTiles();
-  }
+//  }
 
   //arguments.callee.prototype.constructor.prototype.setup(); //use the function in super class 
   /*added by Li */

@@ -126,8 +126,6 @@ KeyboardInputManager.prototype.listen = function () {
     }
   });
   
-    //added by Li
-    this.bindButtonPress("#ai-auto-run", this.aiAutoRun);
 };
 
 KeyboardInputManager.prototype.restart = function (event) {
@@ -144,10 +142,4 @@ KeyboardInputManager.prototype.bindButtonPress = function (selector, fn) {
   var button = document.querySelector(selector);
   button.addEventListener("click", fn.bind(this));
   button.addEventListener(this.eventTouchend, fn.bind(this));
-};
-
-//added by Li
-KeyboardInputManager.prototype.aiAutoRun = function (event) {
-  event.preventDefault();
-  this.emit("run");
 };
