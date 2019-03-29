@@ -36,3 +36,8 @@
   font-weight: bold;
   color: red;   
 }
+.my_note a{
+  font-size: 30px;
+  font-weight: bold;
+  color: red !important;   
+}

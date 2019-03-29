@@ -21,15 +21,16 @@ function loadCss(url) {
 
 //loadScript("js/jquery-3.2.1.min.js");
 loadScript("js/common_function.js");
+loadScript("js/ai_tile.js");
 loadScript("js/ai_grid.js");
 loadScript("js/ai.js");
 loadScript("js/game_manager_ai.js");
 loadCss("style/ai.css");
 
 
-
 document.getElementsByClassName("container")[0].innerHTML +=  '<hr>'+'<p class="my_note">' +
-                    '<strong class="important">Note:</strong> This ai-version is an updated version (we add AI function) on the official version of 2048. You can find the original one <a href="https://github.com/gabrielecirulli/2048?fbclid=IwAR08tJg7dZhlLuL7aBq7MAKkJjckZx6I8RrxIMcj_MUNXvahZHECxVPTWpk" target="_blank" class="my_note">here</a>.'+    
+                    '<strong class="important">Note:</strong> This ai-version is an updated version (we add AI function) on the official version of 2048. You can find the original one <a href="https://github.com/gabrielecirulli/2048?fbclid=IwAR08tJg7dZhlLuL7aBq7MAKkJjckZx6I8RrxIMcj_MUNXvahZHECxVPTWpk" target="_blank" class="my_note">here</a>.'+
+                    'you can see <a target="blank" href="README.md">Readme </a> for detail changes.'
                 '</p>'+
                 '<p  class="my_note">'+
                 'Created by <a href="https://leven87.github.io/" target="_blank"  class="my_note">Li Wang</a>'+

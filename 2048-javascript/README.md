@@ -5,6 +5,7 @@ New added files below:
 
 - js/ai.js
 - js/ai_grid.js
+- js/ai_tile.js
 - js/game_manager_ai.js
 - js/application.js
 - js/start.js

@@ -128,7 +128,7 @@ AI.prototype.search = function (depth, alpha, beta, positions, cutoffs,playerTur
         
         for(var i=0;i<end;i++){
             addedNumber = 2;
-            var newTile = new Tile(cells[i],addedNumber);
+            var newTile = new AITile(cells[i],addedNumber);
             this.grid.insertTile(newTile);
             var score = this.eval();
             if(worstScore > score){
@@ -144,7 +144,7 @@ AI.prototype.search = function (depth, alpha, beta, positions, cutoffs,playerTur
             tiles2.push(newTile);
             
             addedNumber = 4;
-            var newTile = new Tile(cells[i],addedNumber);
+            var newTile = new AITile(cells[i],addedNumber);
             this.grid.insertTile(newTile);
             var score = this.eval();
             if(worstScore > score){
@@ -208,7 +208,7 @@ AI.prototype.computerTurnSearch = function(){
     }else{
         addedNumber = 4;
     }
-    this.grid.insertTile(new Tile(cellLocation,addedNumber));
+    this.grid.insertTile(new AITile(cellLocation,addedNumber));
 }
 
 

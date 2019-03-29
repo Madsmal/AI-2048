@@ -51,7 +51,7 @@ AIGrid.prototype.move = function (direction) {
 
         // Only one merger per row traversal?
         if (next && next.value === tile.value && !next.mergedFrom) {
-          var merged = new Tile(positions.next, tile.value * 2);
+          var merged = new AITile(positions.next, tile.value * 2);
           merged.mergedFrom = [tile, next];
 
           self.insertTile(merged);
@@ -157,7 +157,7 @@ AIGrid.prototype.positionsEqual = function (first, second) {
 AIGrid.prototype.addRandomTile = function () {
   if (this.cellsAvailable()) {
     var value = Math.random() < 0.9 ? 2 : 4;
-    var tile = new Tile(this.grid.randomAvailableCell(), value);
+    var tile = new AITile(this.grid.randomAvailableCell(), value);
 
     this.insertTile(tile);
   }
