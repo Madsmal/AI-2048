@@ -1,0 +1,38 @@
+
+/* 
+    Created on : Mar 29, 2019, 10:08:20 AM
+    Author     : Li
+*/
+
+.restart-button {
+  display: inline-block !important;
+  background: #8f7a66 !important;
+  border-radius: 3px !important; 
+  padding: 0 20px !important;
+  text-decoration: none !important;
+  color: #f9f6f2 !important;
+  height: 40px !important;
+  line-height: 42px !important;
+  display: block !important;
+  text-align: center !important;
+  float: right !important; }
+
+.run-button {
+  display: inline-block;
+  background: #8f7a66;
+  border-radius: 3px;
+  padding: 0 20px;
+  text-decoration: none;
+  color: #f9f6f2;
+  height: 40px;
+  line-height: 42px;
+  display: block;
+  text-align: center;
+  float: right;
+  margin-top:20px;}
+
+.my_note{
+  font-size: 30px;
+  font-weight: bold;
+  color: red;   
+}

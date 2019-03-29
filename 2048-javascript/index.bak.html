@@ -3,18 +3,8 @@
 <head>
   <meta charset="utf-8">
   <title>2048</title>
-
   <link href="style/main.css" rel="stylesheet" type="text/css">
   <link rel="shortcut icon" href="favicon.ico">
-  <link rel="apple-touch-icon" href="meta/apple-touch-icon.png">
-  <link rel="apple-touch-startup-image" href="meta/apple-touch-startup-image-640x1096.png" media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)"> <!-- iPhone 5+ -->
-  <link rel="apple-touch-startup-image" href="meta/apple-touch-startup-image-640x920.png"  media="(device-width: 320px) and (device-height: 480px) and (-webkit-device-pixel-ratio: 2)"> <!-- iPhone, retina -->
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
-
-  <meta name="HandheldFriendly" content="True">
-  <meta name="MobileOptimized" content="320">
-  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0, maximum-scale=1, user-scalable=no, minimal-ui">
 </head>
 <body>
   <div class="container">
@@ -27,8 +17,13 @@
     </div>
 
     <div class="above-game">
-      <p class="game-intro">Join the numbers and get to the <strong>2048 tile!</strong></p>
+      <p class="game-intro">Try and see if you can get <strong>2048 tile!</strong></p>
+      <p class="game-intro">
       <a class="restart-button">New Game</a>
+      
+      <!--<a id="ai-stop" class="run-button">Stop</a> -->
+      <a id="ai-auto-run" class="run-button">AI</a>
+      </p>
     </div>
 
     <div class="game-container">
@@ -77,23 +72,27 @@
     </p>
     <hr>
     <p>
-    <strong class="important">Note:</strong> This site is the official version of 2048. You can play it on your phone via <a href="http://git.io/2048">http://git.io/2048.</a> All other apps or sites are derivatives or fakes, and should be used with caution.
+        <strong class="important">Note:</strong> This ai-version is an updated version (we add AI function) on the official version of 2048. You can find the original one <a href="https://github.com/gabrielecirulli/2048?fbclid=IwAR08tJg7dZhlLuL7aBq7MAKkJjckZx6I8RrxIMcj_MUNXvahZHECxVPTWpk" target="_blank">here</a>.    
     </p>
     <hr>
     <p>
-    Created by <a href="http://gabrielecirulli.com" target="_blank">Gabriele Cirulli.</a> Based on <a href="https://itunes.apple.com/us/app/1024!/id823499224" target="_blank">1024 by Veewo Studio</a> and conceptually similar to <a href="http://asherv.com/threes/" target="_blank">Threes by Asher Vollmer.</a>
+    Created by <a href="https://leven87.github.io/" target="_blank">Li Wang</a>
     </p>
   </div>
 
+  <script src="js/common_function.js"></script>  
   <script src="js/bind_polyfill.js"></script>
   <script src="js/classlist_polyfill.js"></script>
   <script src="js/animframe_polyfill.js"></script>
   <script src="js/keyboard_input_manager.js"></script>
   <script src="js/html_actuator.js"></script>
   <script src="js/grid.js"></script>
+  <script src="js/ai_grid.js"></script>
   <script src="js/tile.js"></script>
   <script src="js/local_storage_manager.js"></script>
+  <script src="js/ai.js"></script>
   <script src="js/game_manager.js"></script>
+  <script src="js/game_manager_ai.js"></script>
   <script src="js/application.js"></script>
 </body>
 </html>

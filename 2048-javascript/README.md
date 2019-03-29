@@ -5,9 +5,11 @@ New added files below:
 
 - js/ai.js
 - js/ai_grid.js
+- js/game_manager_ai.js
+- js/application.js
+- js/start.js
+- js/common_function.js
+
+- css/ai.css
 
 
-Some changed files just for notes and presentation:
-- index.html
-- js/game_manager.js
-- html_actuator.js
