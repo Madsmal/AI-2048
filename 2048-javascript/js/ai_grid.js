@@ -256,10 +256,7 @@ AIGrid.prototype.largestTilePositionEval = function(){
    var x = tile.x;
    var y = tile.y;
    
-   //score += tile.value/4;
    if(tile.x == 0 && tile.y ==0){
-       //console.log("here2");
-   //if((tile.x == 0 || tile.x == 3) && (tile.y==0 || tile.y == 3) && (tile.value >= 8)){
        score += 100 ;
        if(tile.value > MAX_TILE_VALUE){
            score += tile.value;
@@ -267,54 +264,6 @@ AIGrid.prototype.largestTilePositionEval = function(){
         if(MAX_TILE_VALUE >=32 &&  this.getTileNum(MAX_TILE_VALUE) > MAX_TILE_NUM){
            score += tile.value/2;
        }
-//        if(MAX_TILE_VALUE >=128 &&  this.getTileNum(MAX_TILE_VALUE/2) > 2){
-//           score += 10;
-//       }       
-       
-//       if(tile.y > 1 && this.cells[x][y-1] != null ){//up
-//           if(this.cells[x][y-1].value == tile.value){
-//                score += 20;
-//            }
-//           if(this.cells[x][y-1].value == tile.value/2){
-//                score += 10;
-//            }            
-//        }
-//       if(tile.y < 2 && this.cells[x][y+1] != null ){//down
-//           if(this.cells[x][y+1].value == tile.value){
-//                score += 20;
-//            }
-//           if(this.cells[x][y+1].value == tile.value/2){
-//                score += 10;
-//            }            
-//        }  
-//       if(tile.x > 1 && this.cells[x-1][y] != null ){//left
-//           if(this.cells[x-1][y].value == tile.value){
-//                score += 20;
-//            }
-//           if(this.cells[x-1][y].value == tile.value/2){
-//                score += 10;
-//            }            
-//        } 
-//       if(tile.x < 2 && this.cells[x+1][y] != null ){//right
-//           if(this.cells[x+1][y].value == tile.value){
-//                score += 20;
-//            }
-//           if(this.cells[x+1][y].value == tile.value/2){
-//                score += 10;
-//            }            
-//        }
-        
-        //var vector = this.getVector(1);
-//        if((tile.x == 0 && tile.y == 0)){ 
-//                if(this.cells[x+1][y] && this.cells[x+1][y].value >= tile.value/2) && (this.cells[x+2][y] && this.cells[x+2][y] >= this.cells[x+1][y].value) && (this.cells[x+3][y] && this.cells[x+3][y] >= this.cells[x+2][y].value)){
-//                     score += 30;
-//                } 
-//                if((this.cells[x][y+1] && this.cells[x][y+1].value >= tile.value/2) && (this.cells[x][y+2] && this.cells[x][y+2] >= this.cells[x][y+1].value) && (this.cells[x][y+3] && this.cells[x][y+3] >= this.cells[x][y+2].value)){
-//                    score += 30;
-//                }
-//            }
-//        }
-           //console.log(this.cellMonotonicity(tile));
            score += 2* this.cellMonotonicity(tile);
    }else{
        if(tile.previousPosition && tile.previousPosition.x == 0 && tile.previousPosition.y == 0){
@@ -327,13 +276,6 @@ AIGrid.prototype.largestTilePositionEval = function(){
        //score = -100 * tile.value /8 ;
    }
    return score;
-//   if(tilePosition in corners){
-//       console.log(tilePosition);
-//       return 20;
-//   }else{
-//       return 0;
-//   }
-    
 }
 
 AIGrid.prototype.smoothEval = function(){
@@ -413,49 +355,12 @@ AIGrid.prototype.cellMonotonicity  = function (cell){
     var factorY = 1;
     var i,j;
 
-
-    for(j=0;j<4;j++){
-        if(this.cells[x][j]){
-            arrX.push(this.cells[x][j].value);
-        }
-    }
     for(i=0;i<4;i++){
         if(this.cells[i][y]){
             arrY.push(this.cells[i][y].value);
         }
     }
     
-    if(arrX.length >= 5){
-        if(x == 0){//top->down
-            for(i=1;i<arrX.length;i++){
-                if(arrX[i-1] == arrX[i] || arrX[i-1] == 2* arrX[i]){
-                    factorX += (arrX.length-i)*(arrX.length-i);
-                }
-            }
-            if(arrX[0] == arrX[1] || arrX[0] == 2*arrX[1]){
-                factorX += 20;
-                if(arrX[1] == arrX[2] || arrX[1] == 2*arrX[2]){
-                    factorX += 5;
-                    if(arrX[1] == arrX[2] || arrY[1] == 2*arrX[2]){
-                        factorX += 3;
-                    }
-                }                
-            }
-            if(arrX[1] <= arrX[0] / 8){
-                //factorX -= 10;
-            }
-        }
-        if( x==3){//bottom
-            for(i=arrX.length-1;i>0;i--){
-                if(arrX[i] == arrX[i-1] || arrX[i] == 2* arrX[i-1]){
-                    factorX += 2;
-                }
-            }
-            if(arrX[arrX.length-1] == arrX[arrX.length-2] || arrX[arrX.length-1] == 2*arrX[arrX.length-2]){
-                factorX += 10;
-            }             
-        }
-    }
 
     if(arrY.length >= 3){
         if(y == 0){//left->right
@@ -478,19 +383,9 @@ AIGrid.prototype.cellMonotonicity  = function (cell){
                 //console.log("here");
             }            
         }
-        if( y==3){//right
-            for(i=arrY.length-1;i>0;i--){
-                if(arrY[i] == arrY[i-1] || arrY[i] == 2* arrY[i-1]){
-                    factorY += 2;
-                }
-            }
-            if(arrY[arrY.length-1] == arrY[arrY.length-2]){
-                factorY += 10;
-            }            
-        }
     }    
     
-    return factorX * factorY;
+    return  factorY;
 }
 
 
@@ -548,7 +443,7 @@ AIGrid.prototype.monotonicity3 = function(){
                 var nextValue = Math.log(this.cellContent( this.indexes[next][y] ).value) / Math.log(2); 
                 //if (currentValue > nextValue) {
                 if (y == 0 && nextValue > currentValue) {    
-                        score += (currentValue - nextValue)*2;
+                        score += (currentValue - nextValue)*4;
                 }
                 if( (this.cells[3][0] && this.cells[3][1] && this.cells[3][0].value < this.cells[3][1].value) && nextValue > currentValue && (y == 1 || y==2)){
                      score += (currentValue - nextValue);
@@ -567,6 +462,64 @@ AIGrid.prototype.monotonicity3 = function(){
 }
 
 
+//evaluate the isolation of the tiles in the grids
+AIGrid.prototype.isolation = function(){
+    var score = 0;
+    for( var x=0;x<4;x++){
+        for(var y=0; y<4;y++){
+            if(!this.cells[x][y]){
+                continue;
+            }
+            var isolated = true;
+            var current = this.cells[x][y].value;
+            if(this.cellOccupied( {x:x-1,y:y})){//left
+                var neibour = this.cells[x-1][y].value;
+                    if(neibour > current){
+                        score -= Math.log(neibour/current) / Math.log(2); 
+                    }
+                    if(current > neibour){
+                        score -= Math.log(current/neibour) / Math.log(2); 
+                    }
+            }
+            if(this.cellOccupied( {x:x+1,y:y})){//right
+                var neibour = this.cells[x+1][y].value;
+                    if(neibour > current){
+                        score -= Math.log(neibour/current) / Math.log(2); 
+                    }
+                    if(current > neibour){
+                        score -= Math.log(current/neibour) / Math.log(2); 
+                    }
+            }     
+            if(this.cellOccupied( {x:x,y:y-1})){//up
+                var neibour = this.cells[x][y-1].value;
+                    if(neibour > current){
+                        score -= Math.log(neibour/current) / Math.log(2); 
+                    }
+                    if(current > neibour){
+                        score -= Math.log(current/neibour) / Math.log(2); 
+                    }
+            }   
+            if(this.cellOccupied( {x:x,y:y+1})){//up
+                var neibour = this.cells[x][y+1].value;
+                if(neibour == current){
+                    //isolated = false;
+                }else{
+                    if(neibour > current){
+                        score -= Math.log(neibour/current) / Math.log(2); 
+                    }
+                    if(current > neibour){
+                        score -= Math.log(current/neibour) / Math.log(2); 
+                    }
+                }
+            } 
+        }
+    }
+    
+    return score;
+    
+}
+
+
 //getNeighborTileValue
 //direction  0: up, 1: right, 2: down, 3: left
 //AIGrid.prototype.getNeighborTileValue = function(x,y,direction){
@@ -578,28 +531,7 @@ AIGrid.prototype.monotonicity3 = function(){
 //    }
 //        
 //}
-    
-
-
-function writeObj(obj){ 
- var description = ""; 
- for(var i in obj){ 
- var property=obj[i]; 
- description+=i+" = "+property+"\n"; 
- } 
- console.log(description); 
-}
-
-
-
-
-
-
-
-
-
-
-//can't use i
+   
 
 //  use a simple datastructure to store the value in an array
 AIGrid.prototype.indexes = [];

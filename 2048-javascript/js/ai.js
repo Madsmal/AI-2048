@@ -14,6 +14,7 @@ AI.prototype.eval = function () {
     var emptyCells = this.grid.availableCells().length;
     var smoothScore = this.grid.smoothEval();
     var largestTilePositionScore = this.grid.largestTilePositionEval();
+    var isolationScore = this.grid.isolation();
     if(largestTilePositionScore > 0){
 //        console.log(this.grid.findLargestTile());
 //        console.log(code);
@@ -27,7 +28,7 @@ AI.prototype.eval = function () {
     
     return emptyCells * emptyCellsWeight 
             + smoothScore * smoothWeight
-            + largestTilePositionWeight * largestTilePositionScore +monotonicity2Score*2;
+            + largestTilePositionWeight * largestTilePositionScore +monotonicity2Score*2 + isolationScore *2;
     
 }
 
