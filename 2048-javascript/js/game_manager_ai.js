@@ -7,17 +7,6 @@ class GameManagerAI extends GameManager{
         this.aiAutoRunning = false;
         this.aiRunButton = aiRunButton;
         self = this;
-//        $("body").on("click", "#ai-auto-run", function() {
-//            this.aiRunButton.onclick = function(){
-//              if (self.aiAutoRunning) {
-//                self.aiAutoRunning = false;
-//                document.getElementById('ai-auto-run').innerHTML = "AI";
-//              } else {
-//                self.aiAutoRunning = true;
-//                self.run();
-//                document.getElementById('ai-auto-run').innerHTML = "stop";
-//              }               
-//        }});
 
         this.aiRunButton.onclick = function(){
           if (self.aiAutoRunning) {

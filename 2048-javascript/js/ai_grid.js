@@ -320,6 +320,9 @@ AIGrid.prototype.largestTilePositionEval = function(){
        if(tile.previousPosition && tile.previousPosition.x == 0 && tile.previousPosition.y == 0){
            score -= 1000;
        }
+//       if(tile.value>=128 &&(!this.cells[0][0] || this.cells[0][0].value <= 32 )){
+//           score -= 1000;
+//       }
        //score = -100;
        //score = -100 * tile.value /8 ;
    }
@@ -515,10 +518,10 @@ AIGrid.prototype.monotonicity3 = function(){
                 var nextValue = Math.log(this.cellContent( this.indexes[x][next] ).value) / Math.log(2); 
                 //if (currentValue > nextValue) {
                 if (nextValue > currentValue) {
-                    if(x == 0){
-                        score += (currentValue - nextValue)*2;
-                    }else{
-                        score += (currentValue - nextValue)*2;
+                    if(x == 3){
+                        score += (currentValue - nextValue);
+                    }else {
+                        score += (currentValue - nextValue);
                     }
                 }
                 next ++;
@@ -526,7 +529,7 @@ AIGrid.prototype.monotonicity3 = function(){
         }
     }
     
-    for( var y=0;y<2;y++){
+    for( var y=0;y<3;y++){
         for(var current=0; current<3;current++){
             var next = current+1;
             if(!this.cellOccupied( {x:current,y:y})){
@@ -544,14 +547,17 @@ AIGrid.prototype.monotonicity3 = function(){
     //        0;  
                 var nextValue = Math.log(this.cellContent( this.indexes[next][y] ).value) / Math.log(2); 
                 //if (currentValue > nextValue) {
-                if (nextValue > currentValue && y == 0) {    
-                    if(y == 0){
+                if (y == 0 && nextValue > currentValue) {    
                         score += (currentValue - nextValue)*2;
-                    }
                 }
-                if(nextValue < currentValue && y == 1){
-                     score += (nextValue - currentValue);
-                }
+                if( (this.cells[3][0] && this.cells[3][1] && this.cells[3][0].value < this.cells[3][1].value) && nextValue > currentValue && (y == 1 || y==2)){
+                     score += (currentValue - nextValue);
+                } else{
+                    if( nextValue < currentValue && (y == 1 || y==2)){
+                         score += (nextValue - currentValue);
+                    }                    
+                }                
+               
                 next ++;
             }
         }

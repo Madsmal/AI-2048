@@ -1,5 +1,5 @@
-animationDelay=50;
-minSearchTime = 50;
+animationDelay=20;
+minSearchTime = 30;
 
 function loadScript(name){
     
