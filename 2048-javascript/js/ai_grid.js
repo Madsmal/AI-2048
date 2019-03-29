@@ -1,22 +1,3 @@
-var deepClone = function(source,target){
-  source = source || {} ;
-  target = target || {};
-  var toStr = Object.prototype.toString ,
-    arrStr = '[object array]' ;
-  for(var i in source){
-    if(source.hasOwnProperty(i)){
-      var item = source[i] ;
-      if(typeof item === 'object'){
-        target[i] = (toStr.apply(item).toLowerCase() === arrStr) ? [] : {} ;
-        deepClone(item,target[i]) ;
-      }else{
-        target[i] = item;
-      }
-    }
-  }
-  return target ;
-} ;
-
 function AIGrid(size, previousState){
   Grid.apply(this,arguments);
   //this.name = name || 'Tom';
@@ -279,12 +260,11 @@ AIGrid.prototype.largestTilePositionEval = function(){
    if(tile.x == 0 && tile.y ==0){
        //console.log("here2");
    //if((tile.x == 0 || tile.x == 3) && (tile.y==0 || tile.y == 3) && (tile.value >= 8)){
-       score += 40 ;
+       score += 100 ;
        if(tile.value > MAX_TILE_VALUE){
            score += tile.value;
        }
         if(MAX_TILE_VALUE >=32 &&  this.getTileNum(MAX_TILE_VALUE) > MAX_TILE_NUM){
-            console.log("here");
            score += tile.value/2;
        }
 //        if(MAX_TILE_VALUE >=128 &&  this.getTileNum(MAX_TILE_VALUE/2) > 2){
