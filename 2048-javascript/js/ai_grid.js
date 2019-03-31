@@ -264,7 +264,7 @@ AIGrid.prototype.largestTilePositionEval = function(){
         if(MAX_TILE_VALUE >=32 &&  this.getTileNum(MAX_TILE_VALUE) > MAX_TILE_NUM){
            score += tile.value/2;
        }
-           score += 2* this.cellMonotonicity(tile);
+           score += 2* this.firstRowMonotonicity(tile);
    }else{
        if(tile.previousPosition && tile.previousPosition.x == 0 && tile.previousPosition.y == 0){
            score -= 1000;
@@ -278,27 +278,32 @@ AIGrid.prototype.largestTilePositionEval = function(){
    return score;
 }
 
-AIGrid.prototype.smoothEval = function(){
+//evaluate the smoothness of the grids
+AIGrid.prototype.smoothnessEval = function(){
     var totalScore = 0;
     var arr = Array();
-    for(i=0;i<4;i++){
+    for(i=0;i<4;i++){//col
         for(j=0;j<4;j++){
           if(this.cells[i][j] != null){
               arr.push(this.cells[i][j].value);
           }
         }
-        if(arr.length == 4 && (arr[0]<=arr[1]<=arr[2]<=arr[3] || arr[0]>=arr[1]>=arr[2]>=arr[3]) && (arr[3]<=4*arr[0] || arr[0]<=4*arr[3])){
-            //totalScore += 10;
-            if(arr.length == 4 && arr[0]==arr[1]==arr[2]==arr[3]){
-                totalScore += 10;
+        if(arr.length == 4){
+            if(arr[0]==arr[1]==arr[2]==arr[3]){
+                totalScore += 4;
+            }else if((arr[0]==arr[1]==arr[2]) || (arr[1]==arr[2]==arr[3])){
+                totalScore += 3;
+            }else if((arr[0]==arr[1]) || (arr[1]==arr[2]) || (arr[2]==arr[3])){
+                totalScore += 1;
             }
         }
 
-        if(arr.length == 3 && (arr[0]<=arr[1]<=arr[2] || arr[0]>=arr[1]>=arr[2])){
-            //totalScore += 10;
-            if(arr.length == 3 && arr[0]==arr[1]==arr[2]){
-                totalScore += 10;
-            } 
+        if(arr.length == 3){
+            if(arr[0]==arr[1]==arr[2]){
+                totalScore += 3;
+            }else if((arr[0]==arr[1]) || (arr[1]==arr[2])){
+                totalScore += 1;
+            }
         }
 
         if(arr.length == 2 && arr[0]==arr[1]){
@@ -309,49 +314,42 @@ AIGrid.prototype.smoothEval = function(){
     
     for(i=0;i<4;i++){
         for(j=0;j<4;j++){
-          if(this.cells[j][i] != null){
+          if(this.cells[j][i] != null){//row
               arr.push(this.cells[j][i].value);
           }
         }
-        if(arr.length == 4 && (arr[0]<=arr[1]<=arr[2]<=arr[3] || arr[0]>=arr[1]>=arr[2]>=arr[3]) && (arr[3]<=4*arr[0] || arr[0]<=4*arr[3]) ){
-            //totalScore += 10;
-            if(arr.length == 4 && arr[0]==arr[1]==arr[2]==arr[3]){
-                 totalScore += 10;
+        if(arr.length == 4){
+            if(arr[0]==arr[1]==arr[2]==arr[3]){
+                totalScore += 4;
+            }else if((arr[0]==arr[1]==arr[2]) || (arr[1]==arr[2]==arr[3])){
+                totalScore += 3;
+            }else if((arr[0]==arr[1]) || (arr[1]==arr[2]) || (arr[2]==arr[3])){
+                totalScore += 1; 
             }
         }
-        if(arr.length == 3 && (arr[0]<=arr[1]<=arr[2] || arr[0]>=arr[1]>=arr[2])){
-            //totalScore += 10;
-            if(arr.length == 3 && arr[0]==arr[1]==arr[2]){
-                totalScore += 10;
-             } 
+
+        if(arr.length == 3){
+            if(arr[0]==arr[1]==arr[2]){
+                totalScore += 3;
+            }else if((arr[0]==arr[1]) || (arr[1]==arr[2])){
+                totalScore += 1;
+            }
         }
 
         if(arr.length == 2 && arr[0]==arr[1]){
-            totalScore += 2;
+            totalScore += 1;
         }
-        arr = Array();
+        arr == Array();
     }    
-
-//    for(i=0;i<4;i++){
-//        for(j=0;j<4;j++){
-//            if(this.cells[j][i] != null){
-//                 v = this.cells[j][i].value;
-//                 
-//            } 
-//        }
-//    }
     return totalScore;
 }
 
-AIGrid.prototype.cellMonotonicity  = function (cell){
+AIGrid.prototype.firstRowMonotonicity  = function (cell){
     if (!this.withinBounds(cell)){
         return 0;
     }
-    var x= cell.x;
     var y = cell.y;
-    var arrX = Array();
     var arrY = Array();
-    var factorX = 1;
     var factorY = 1;
     var i,j;
 
@@ -443,7 +441,7 @@ AIGrid.prototype.monotonicity3 = function(){
                 var nextValue = Math.log(this.cellContent( this.indexes[next][y] ).value) / Math.log(2); 
                 //if (currentValue > nextValue) {
                 if (y == 0 && nextValue > currentValue) {    
-                        score += (currentValue - nextValue)*4;
+                        score += (currentValue - nextValue)*10;
                 }
                 if( (this.cells[3][0] && this.cells[3][1] && this.cells[3][0].value < this.cells[3][1].value) && nextValue > currentValue && (y == 1 || y==2)){
                      score += (currentValue - nextValue);
@@ -464,58 +462,69 @@ AIGrid.prototype.monotonicity3 = function(){
 
 //evaluate the isolation of the tiles in the grids
 AIGrid.prototype.isolation = function(){
-    var score = 0;
+    var scores = 0;
     for( var x=0;x<4;x++){
         for(var y=0; y<4;y++){
-            if(!this.cells[x][y]){
+            if(!this.cells[x][y] || this.cells[x][y].value > 8){
                 continue;
             }
+            var score = 0;
             var isolated = true;
             var current = this.cells[x][y].value;
-            if(this.cellOccupied( {x:x-1,y:y})){//left
+            if(this.cellOccupied( {x:x-1,y:y}) && isolated){//left
                 var neibour = this.cells[x-1][y].value;
-                    if(neibour > current){
-                        score -= Math.log(neibour/current) / Math.log(2); 
-                    }
-                    if(current > neibour){
-                        score -= Math.log(current/neibour) / Math.log(2); 
+                    if(neibour == current){
+                        isolated = false;
+                        score = 0;
+                    }else if(neibour > current){
+                        score = Math.min(Math.log(neibour/current) / Math.log(2), score); 
+                    }else if(current > neibour){
+                        score = Math.min(Math.log(current/neibour) / Math.log(2), score); 
+                        //score -= Math.log(current/neibour) / Math.log(2); 
                     }
             }
-            if(this.cellOccupied( {x:x+1,y:y})){//right
+            if(this.cellOccupied( {x:x+1,y:y}) && isolated){//right
                 var neibour = this.cells[x+1][y].value;
-                    if(neibour > current){
-                        score -= Math.log(neibour/current) / Math.log(2); 
-                    }
-                    if(current > neibour){
-                        score -= Math.log(current/neibour) / Math.log(2); 
+                    if(neibour == current){
+                        isolated = false;
+                        score = 0;
+                    }else if(neibour > current){
+                        score = Math.max(Math.log(neibour/current) / Math.log(2), score); 
+                    }else if(current > neibour){
+                        score = Math.max(Math.log(current/neibour) / Math.log(2), score); 
+                        //score -= Math.log(current/neibour) / Math.log(2); 
                     }
             }     
-            if(this.cellOccupied( {x:x,y:y-1})){//up
+            if(this.cellOccupied( {x:x,y:y-1}) && isolated){//up
                 var neibour = this.cells[x][y-1].value;
-                    if(neibour > current){
-                        score -= Math.log(neibour/current) / Math.log(2); 
-                    }
-                    if(current > neibour){
-                        score -= Math.log(current/neibour) / Math.log(2); 
+                    if(neibour == current){
+                        isolated = false;
+                        score = 0;
+                    }else if(neibour > current){
+                        score = Math.max(Math.log(neibour/current) / Math.log(2), score); 
+                    }else if(current > neibour){
+                        score = Math.max(Math.log(current/neibour) / Math.log(2), score); 
+                        //score -= Math.log(current/neibour) / Math.log(2); 
                     }
             }   
-            if(this.cellOccupied( {x:x,y:y+1})){//up
+            if(this.cellOccupied( {x:x,y:y+1}) && isolated){//up
                 var neibour = this.cells[x][y+1].value;
-                if(neibour == current){
-                    //isolated = false;
-                }else{
-                    if(neibour > current){
-                        score -= Math.log(neibour/current) / Math.log(2); 
+                    if(neibour == current){
+                        isolated = false;
+                        score = 0;
+                    }else if(neibour > current){
+                        score = Math.max(Math.log(neibour/current) / Math.log(2), score); 
+                    }else if(current > neibour){
+                        score = Math.max(Math.log(current/neibour) / Math.log(2), score); 
+                        //score -= Math.log(current/neibour) / Math.log(2); 
                     }
-                    if(current > neibour){
-                        score -= Math.log(current/neibour) / Math.log(2); 
-                    }
-                }
-            } 
+            }
+            
+            scores -= score;
         }
     }
     
-    return score;
+    return scores;
     
 }
 

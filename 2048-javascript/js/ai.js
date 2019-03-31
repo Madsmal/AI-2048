@@ -12,7 +12,7 @@ AI.prototype.eval = function () {
     var smoothWeight = 1;
     var largestTilePositionWeight = 1;
     var emptyCells = this.grid.availableCells().length;
-    var smoothScore = this.grid.smoothEval();
+    var smoothScore = this.grid.smoothnessEval();
     var largestTilePositionScore = this.grid.largestTilePositionEval();
     var isolationScore = this.grid.isolation();
     if(largestTilePositionScore > 0){
