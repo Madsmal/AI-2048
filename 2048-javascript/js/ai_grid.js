@@ -364,7 +364,7 @@ AIGrid.prototype.firstRowMonotonicity  = function (cell){
         if(y == 0){//left->right
             for(i=1;i<arrY.length;i++){
                 if(arrY[i-1] == arrY[i] || arrY[i-1] == 2* arrY[i]){
-                    factorY += Math.log(arrY[i])*(arrY.length-i);
+                    factorY += Math.log(arrY[i])/Math.log(2)* (arrY.length-i);
                 }
             }
             if(arrY[0] == arrY[1] || arrY[0] == 2*arrY[1]){
@@ -388,7 +388,7 @@ AIGrid.prototype.firstRowMonotonicity  = function (cell){
 
 
 //evaluate the all grid monotonicity in up-to-down direction
-AIGrid.prototype.monotonicity3 = function(){
+AIGrid.prototype.monotonicity = function(){
     var score =0;
     for( var x=0;x<4;x++){
         for(var current=0; current<3;current++){
@@ -399,7 +399,7 @@ AIGrid.prototype.monotonicity3 = function(){
             //var currentValue = this.cellOccupied({x:x, y:current}) ?
         //Math.log(this.cellContent( this.indexes[x][current] ).value) / Math.log(2) :
         //0;  
-            var currentValue = Math.log(this.cellContent( this.indexes[x][current] ).value) / Math.log(2);
+            var currentValue = Math.log(this.cellContent( {x:x,y:current} ).value) / Math.log(2);
             while(next < 4){
                 if(!this.cellOccupied({x:x,y:next})){
                     next ++;
@@ -408,14 +408,10 @@ AIGrid.prototype.monotonicity3 = function(){
 //                var nextValue = this.cellOccupied({x:x, y:next}) ?
 //        Math.log(this.cellContent( this.indexes[x][next] ).value) / Math.log(2) :
 //        0;  
-                var nextValue = Math.log(this.cellContent( this.indexes[x][next] ).value) / Math.log(2); 
+                var nextValue = Math.log(this.cellContent( {x:x,y:next} ).value) / Math.log(2); 
                 //if (currentValue > nextValue) {
                 if (nextValue > currentValue) {
-                    if(x == 3){
                         score += (currentValue - nextValue);
-                    }else {
-                        score += (currentValue - nextValue);
-                    }
                 }
                 next ++;
             }
@@ -429,16 +425,14 @@ AIGrid.prototype.monotonicity3 = function(){
                 continue;
             }
 
-            var currentValue = Math.log(this.cellContent( this.indexes[current][y] ).value) / Math.log(2);
+            var currentValue = Math.log(this.cellContent( {x:current,y:y} ).value) / Math.log(2);
             while(next < 4){
                 if(!this.cellOccupied({x:next,y:y})){
                     next ++;
                     continue;
                 }
-    //                var nextValue = this.cellOccupied({x:x, y:next}) ?
-    //        Math.log(this.cellContent( this.indexes[x][next] ).value) / Math.log(2) :
-    //        0;  
-                var nextValue = Math.log(this.cellContent( this.indexes[next][y] ).value) / Math.log(2); 
+
+                var nextValue = Math.log(this.cellContent( {x:next,y:y} ).value) / Math.log(2); 
                 //if (currentValue > nextValue) {
                 if (y == 0 && nextValue > currentValue) {    
                         score += (currentValue - nextValue)*10;
@@ -526,27 +520,4 @@ AIGrid.prototype.isolation = function(){
     
     return scores;
     
-}
-
-
-//getNeighborTileValue
-//direction  0: up, 1: right, 2: down, 3: left
-//AIGrid.prototype.getNeighborTileValue = function(x,y,direction){
-//    if(this.cells[x][y] == null){
-//        return null;
-//    }
-//    if(direction == 0 && y > 1 && this.cells[x][y-1] != null){
-//        return 
-//    }
-//        
-//}
-   
-
-//  use a simple datastructure to store the value in an array
-AIGrid.prototype.indexes = [];
-for (var x=0; x<4; x++) {
-  AIGrid.prototype.indexes.push([]);
-  for (var y=0; y<4; y++) {
-    AIGrid.prototype.indexes[x].push( {x:x, y:y} );
-  }
 }

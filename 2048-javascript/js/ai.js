@@ -11,32 +11,29 @@ AI.prototype.eval = function () {
     var emptyCellsWeight = 5;
     var smoothWeight = 1;
     var largestTilePositionWeight = 1;
+    var isolationScoreWeight = 2;
+    var monotonicityWeight = 2;
+    
     var emptyCells = this.grid.availableCells().length;
     var smoothScore = this.grid.smoothnessEval();
     var largestTilePositionScore = this.grid.largestTilePositionEval();
     var isolationScore = this.grid.isolation();
-    if(largestTilePositionScore > 0){
-//        console.log(this.grid.findLargestTile());
-//        console.log(code);
-//        console.log(largestTilePositionScore);
-    }
-    
-    var monotonicity2Score = this.grid.monotonicity3();
-    //console.log(this.grid.monotonicity3());
-//    console.log(this.grid.monotonicity2());
-    //console.log(monotonicity2Score);
+    var monotonicityScore = this.grid.monotonicity();
     
     return emptyCells * emptyCellsWeight 
             + smoothScore * smoothWeight
-            + largestTilePositionWeight * largestTilePositionScore +monotonicity2Score*2 + isolationScore *2;
+            + largestTilePositionWeight * largestTilePositionScore 
+            +monotonicityScore*monotonicityWeight
+            + isolationScore *isolationScoreWeight;
     
 }
 
 
-//depth -- 搜索深度
+//depth -- search depth
 //alpha -- lower bound on what max can achieve when playing through the choice points leading to the current node
 //beta --  upper bound on what min can achieve when playing through the choice points leading to the current node
 //positions -- 存储已经到达过的位置状态
+//cutoff -- number of cutoff
 AI.prototype.search = function (depth, alpha, beta, positions, cutoffs,playerTurn = true) {
     var bestMove = -2;
     var bestScore = 0;
@@ -72,28 +69,6 @@ AI.prototype.search = function (depth, alpha, beta, positions, cutoffs,playerTur
                     //alpha = evalScore;
                     //continue;
                 }
-                
-//                if(alpha > bestScore){//max节点，取所有节点中的最大分数
-//                    bestScore = alpha;
-//                }
-
-//                if(searchBestResult == {} && initialDirection === -1){
-//                    bestScore = evalScore;
-//                    bestMove = moveResult.move;
-//                    searchBestResult = { move: direction, score: bestScore,positions:positions,cutoffs:cutoffs };
-//                }else if(bestScore < evalScore){
-//                    //console.log(bestScore);
-//                    bestScore = evalScore;
-//                    bestMove = moveResult.move;
-//                    searchBestResult = { move: direction, score: bestScore,positions:positions,cutoffs:cutoffs};
-//                    if(initialDirection !== -1){
-//                        searchBestResult.move = initialDirection;
-//                    }
-//                }
-                //console.log(tempResult.score);
-                //console.log(bestScore);
-               // console.log("bestScore in alpha:"+tempResult.score);
-               // console.log("tempResult.score:"+tempResult.score);
                 
                if( bestScore == tempResult.score && bestMove < 0){
                     bestMove = direction;
