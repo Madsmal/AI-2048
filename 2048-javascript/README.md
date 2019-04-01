@@ -1,7 +1,7 @@
 # 2048
 
 ## Introduction 
-This ai-version is an updated version (we add AI function use Minimax with Alpha-beta pruning algorithm) on the official version of 2048. You can find the original one [here](https://github.com/gabrielecirulli/2048?fbclid=IwAR08tJg7dZhlLuL7aBq7MAKkJjckZx6I8RrxIMcj_MUNXvahZHECxVPTWpk). 
+This ai-version is an updated version  on the official version of 2048. We add AI function use Minimax with Alpha-beta pruning algorithm. You can find the original one [here](https://github.com/gabrielecirulli/2048?fbclid=IwAR08tJg7dZhlLuL7aBq7MAKkJjckZx6I8RrxIMcj_MUNXvahZHECxVPTWpk). 
 
 ## How to use
 - Download all the files in this dierectory and open index.html with Chrome. Then you will see the game interface.
