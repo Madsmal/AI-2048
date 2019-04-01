@@ -409,7 +409,6 @@ AIGrid.prototype.monotonicity = function(){
 //        Math.log(this.cellContent( this.indexes[x][next] ).value) / Math.log(2) :
 //        0;  
                 var nextValue = Math.log(this.cellContent( {x:x,y:next} ).value) / Math.log(2); 
-                //if (currentValue > nextValue) {
                 if (nextValue > currentValue) {
                         score += (currentValue - nextValue);
                 }
@@ -418,7 +417,7 @@ AIGrid.prototype.monotonicity = function(){
         }
     }
     
-    for( var y=0;y<3;y++){
+    for( var y=0;y<4;y++){
         for(var current=0; current<3;current++){
             var next = current+1;
             if(!this.cellOccupied( {x:current,y:y})){
@@ -436,14 +435,16 @@ AIGrid.prototype.monotonicity = function(){
                 //if (currentValue > nextValue) {
                 if (y == 0 && nextValue > currentValue) {    
                         score += (currentValue - nextValue)*10;
+                }else if(nextValue > currentValue){
+                       score += (currentValue - nextValue);
                 }
-                if( (this.cells[3][0] && this.cells[3][1] && this.cells[3][0].value < this.cells[3][1].value) && nextValue > currentValue && (y == 1 || y==2)){
-                     score += (currentValue - nextValue);
-                } else{
-                    if( nextValue < currentValue && (y == 1 || y==2)){
-                         score += (nextValue - currentValue);
-                    }                    
-                }                
+//                if( (this.cells[3][0] && this.cells[3][1] && this.cells[3][0].value < this.cells[3][1].value) && nextValue > currentValue && (y == 1 || y==2)){
+//                     score += (currentValue - nextValue);
+//                } else{
+//                    if( nextValue < currentValue && (y == 1 || y==2)){
+//                         score += (nextValue - currentValue);
+//                    }                    
+//                }                
                
                 next ++;
             }
@@ -459,7 +460,7 @@ AIGrid.prototype.isolation = function(){
     var scores = 0;
     for( var x=0;x<4;x++){
         for(var y=0; y<4;y++){
-            if(!this.cells[x][y] || this.cells[x][y].value > 8){
+            if(!this.cells[x][y] || this.cells[x][y].value > 256){
                 continue;
             }
             var score = 0;

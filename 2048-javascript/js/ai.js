@@ -10,9 +10,9 @@ function AI(grid) {
 AI.prototype.eval = function () {
     var emptyCellsWeight = 5;
     var smoothWeight = 1;
-    var largestTilePositionWeight = 1;
-    var isolationScoreWeight = 2;
-    var monotonicityWeight = 2;
+    var largestTilePositionWeight = 2;
+    var isolationScoreWeight = 0;
+    var monotonicityWeight = 1.5;
     
     var emptyCells = this.grid.availableCells().length;
     var smoothScore = this.grid.smoothnessEval();
