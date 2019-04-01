@@ -4,13 +4,13 @@
 
 Further improvement can be adjusting parameters in a machine learning approach, rather than hard coding all of them. It is not trivial for human to explore how to acheive pretty high score, for example, merging a 16384 tile. Hopefully, a more advanced AI may figure out the pattern.
 
-performance:
-    2048: 99% 
-    4096: 89% 
-    8192: 65% 
+performance:<br />
+    2048: 99% <br />
+    4096: 89% <br />
+    8192: 65% <br />
     16384: 4% 
 
-average time for a move:
+average time for a move:<br />
     30 ms 
 
 To run the executable, go to the src directory and run ./main in command line.
